@@ -52,7 +52,7 @@ function App() {
         <Row>
           <Col sm={6}>
             {
-              activeContract && Object.keys(activeContract.functions).map((functionName, idx) => (
+              activeContract && Object.keys(activeContract.functions).filter(key => key.endsWith(")")).map((functionName, idx) => (
                 <div key={idx}>
                   <Button variant="link" onClick={() => triggerCall(activeContract, functionName)}>{functionName}</Button>
                 </div>
