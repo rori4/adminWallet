@@ -9,7 +9,8 @@
 * [ ] enable metamask integration
 * [ ] enable use of multiple signers (donor, bundle signer)
 * [ ] enable type detection for calls
-* [ ] enable param input & sends
+* [ ] enable param detection & inputs
+* [ ] enable sends
 * [ ] create an ordered list for transactions
 * [ ] send transactions from the ordered list in nonce-assigned order
 * [ ] send transactions through Flashbots (maybe just make it easy for the user to switch networks and use the Flashbots RPC endpoint)
