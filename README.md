@@ -1,4 +1,4 @@
-# flashbots bundler app
+# ETH tx bundler app
 
 * web app; basically etherscan but with multiple transactions and flashbots integration
 * enter contract address and get buttons that allow you to send transactions or add them to an orderd list
