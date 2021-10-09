@@ -43,18 +43,22 @@ const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, 
     {
         activeContract && <>
         <Card>
-        <Card.Body>
-            <Card.Title>Contract Address</Card.Title>
-            <code>{activeContract.address}</code>
-        </Card.Body>
+            <Card.Body>
+                <Card border="light">
+                    <Card.Body>
+                        <Card.Title>Contract Address</Card.Title>
+                        <code>{activeContract.address}</code>
+                    </Card.Body>
+                </Card>
+                {Object.keys(activeContract.interface.functions)
+                .filter(key => key.endsWith(")"))
+                .map((functionName, idx) => (
+                    <div key={idx}>
+                    <FunctionDrawer functionName={functionName} contract={activeContract} />
+                    </div>
+                ))}
+            </Card.Body>
         </Card>
-        {Object.keys(activeContract.interface.functions)
-        .filter(key => key.endsWith(")"))
-        .map((functionName, idx) => (
-            <div key={idx}>
-            <FunctionDrawer functionName={functionName} contract={activeContract} />
-            </div>
-        ))}
     </>}
 </>)}
 

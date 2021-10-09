@@ -16,8 +16,7 @@ import { Contract } from 'ethers';
 import Contracts from './components/Contracts';
 
 // lib
-import { getContracts, addContract as addContractToCache, flush } from "./lib/cache";
-console.log(getContracts());
+import { getContracts, flush } from "./lib/cache";
 
 function App() {
   const [activeContract, setActiveContract] = useState<Contract>();
@@ -56,22 +55,18 @@ function App() {
     <div className="App">
       <Container>
         <Row>
-          <Col sm={4}>
-            <Card itemType="borderless">
-              <Card.Body>
-                <Card.Title>Admin Controls</Card.Title>
-                <Button onClick={() => {flush(); setContracts(undefined); setActiveContract(undefined);}}>Flush Cache</Button>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-        <br />
-        <Row>
-          <Col sm={6}>
+          <Col sm={7}>
             <Contracts contracts={contracts} setContracts={setContracts} activeContract={activeContract} setActiveContract={setActiveContract} />
           </Col>
-          <Col sm={6}>
+          <Col sm={5}>
             <h3>Signers</h3>
+            <hr />
+            <Card border="light" bg="secondary" text="light">
+              <Card.Body>
+                <Card.Title>Admin Controls</Card.Title>
+                <Button variant="danger" onClick={() => {flush(); setContracts(undefined); setActiveContract(undefined);}}>Flush Cache</Button>
+              </Card.Body>
+            </Card>
           </Col>
         </Row>
       </Container>
