@@ -6,7 +6,6 @@ import {
   Card,
   Col,
   Container,
-  Dropdown,
   Row,
 } from "react-bootstrap";
 import { Contract } from 'ethers';

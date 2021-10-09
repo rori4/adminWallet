@@ -33,11 +33,11 @@ const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, 
     
     {contracts && contracts.length > 0 && <>
         <hr />
-        <Dropdown>
-        <Dropdown.Toggle variant="link" id="contract-dropdown">{activeContract?.address || "Choose a contract"}</Dropdown.Toggle>
-        <Dropdown.Menu>
-            {contracts.map((contract, idx) => <Dropdown.Item key={idx} onClick={() => setActiveContract(contract)}>{contract.address}</Dropdown.Item>)}
-        </Dropdown.Menu>
+        <Dropdown style={{marginBottom: 16}}>
+            <Dropdown.Toggle variant="link" id="contract-dropdown">{activeContract?.address || "Choose a contract"}</Dropdown.Toggle>
+            <Dropdown.Menu>
+                {contracts.map((contract, idx) => <Dropdown.Item key={idx} onClick={() => setActiveContract(contract)}>{contract.address}</Dropdown.Item>)}
+            </Dropdown.Menu>
         </Dropdown>
     </>}
     {
