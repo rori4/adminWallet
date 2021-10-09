@@ -16,7 +16,6 @@ import { getContract } from './lib/contract';
 function App() {
   const [activeContract, setActiveContract] = useState<Contract>();
   const [provider, setProvider] = useState<providers.JsonRpcProvider>();
-  const [currentCallRes, setCurrentCallRes] = useState<String>();
 
   useEffect(() => {
     async function load() {
@@ -37,20 +36,21 @@ function App() {
     }
   }, []);
 
-  const triggerCall = async (contract: Contract, functionName: string, args: any[]) => {
+  const triggerCall = async (contract: Contract, functionName: string, args: any[], setResult: Function) => {
     const trueName = contract.interface.getFunction(functionName).name;
     const tx = await contract.populateTransaction[trueName](...args);
     const res = await providers.getDefaultProvider().call(tx);
     try {
-      setCurrentCallRes(ethers.utils.toUtf8String(res));
+      setResult(ethers.utils.toUtf8String(res));
     } catch (e) {
-      setCurrentCallRes(res.toString());
+      setResult(res.toString());
     }
   }
 
   const FunctionDrawer: FunctionComponent<{functionName: string}> = ({functionName}) => {
     // stores input values
     const [args, setArgs] = useState<string[]>([]);
+    const [result, setResult] = useState<string>();
 
     // read function params, make inputs for each and assign values to args
     console.log("function name", functionName);
@@ -76,7 +76,8 @@ function App() {
           }} />
           </div>)
         })}
-        <Button variant="link" onClick={() => triggerCall(activeContract, functionName, args)}>{functionName}</Button>
+        {result && <p><code>{result}</code></p>}
+        <Button variant="link" onClick={() => triggerCall(activeContract, functionName, args, setResult)}>{functionName}</Button>
         </Card.Body>
       </Card> : <></>
     )
@@ -98,7 +99,7 @@ function App() {
             }
           </Col>
           <Col sm={6}>
-            <code>{currentCallRes}</code>
+            :-)
           </Col>
         </Row>
       </Container>
