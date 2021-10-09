@@ -13,8 +13,7 @@ import { Contract } from 'ethers';
 // import detectEthereumProvider from '@metamask/detect-provider';
 
 // components
-import FunctionDrawer from './components/FunctionDrawer';
-import Input from './components/Input';
+import Contracts from './components/Contracts';
 
 // lib
 import { getContracts, addContract as addContractToCache, flush } from "./lib/cache";
@@ -22,7 +21,7 @@ console.log(getContracts());
 
 function App() {
   const [activeContract, setActiveContract] = useState<Contract>();
-  const [contractAddress, setContractAddress] = useState<string>();
+  
   const [contracts, setContracts] = useState<Contract[]>();
   // const [provider, setProvider] = useState<providers.JsonRpcProvider>();
 
@@ -53,19 +52,12 @@ function App() {
     load();
   }, [activeContract, contracts]);
 
-  const addContract = async () => {
-    if (contractAddress) {
-      const freshContracts = await addContractToCache(contractAddress);
-      setContracts(freshContracts);
-    }
-  }
-
   return (
     <div className="App">
       <Container>
         <Row>
           <Col sm={4}>
-            <Card>
+            <Card itemType="borderless">
               <Card.Body>
                 <Card.Title>Admin Controls</Card.Title>
                 <Button onClick={() => {flush(); setContracts(undefined); setActiveContract(undefined);}}>Flush Cache</Button>
@@ -76,35 +68,7 @@ function App() {
         <br />
         <Row>
           <Col sm={6}>
-            <h3>Contracts</h3>
-            <Input label="Add Contract" value={contractAddress} setValue={setContractAddress} id="contractAddress" />
-            <Button disabled={!contractAddress} size="sm" onClick={() => {addContract(); setContractAddress(undefined);}}>Add Contract</Button>
-            
-            {contracts && contracts.length > 0 && <>
-              <hr />
-              <Dropdown>
-                <Dropdown.Toggle variant="link" id="contract-dropdown">{activeContract?.address || "Choose a contract"}</Dropdown.Toggle>
-                <Dropdown.Menu>
-                  {contracts.map((contract, idx) => <Dropdown.Item key={idx} onClick={() => setActiveContract(contract)}>{contract.address}</Dropdown.Item>)}
-                </Dropdown.Menu>
-              </Dropdown>
-            </>}
-            {
-              activeContract && <>
-              <Card>
-                <Card.Body>
-                  <Card.Title>Contract Address</Card.Title>
-                  <code>{activeContract.address}</code>
-                </Card.Body>
-              </Card>
-              {Object.keys(activeContract.interface.functions)
-                .filter(key => key.endsWith(")"))
-                .map((functionName, idx) => (
-                  <div key={idx}>
-                    <FunctionDrawer functionName={functionName} contract={activeContract} />
-                  </div>
-              ))}
-            </>}
+            <Contracts contracts={contracts} setContracts={setContracts} activeContract={activeContract} setActiveContract={setActiveContract} />
           </Col>
           <Col sm={6}>
             <h3>Signers</h3>
