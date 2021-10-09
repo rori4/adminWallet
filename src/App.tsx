@@ -78,7 +78,7 @@ function App() {
           <Col sm={6}>
             <h3>Contracts</h3>
             <Input label="Add Contract" value={contractAddress} setValue={setContractAddress} id="contractAddress" />
-            <Button disabled={!contractAddress} size="sm" onClick={addContract}>Add Contract</Button>
+            <Button disabled={!contractAddress} size="sm" onClick={() => {addContract(); setContractAddress(undefined);}}>Add Contract</Button>
             
             {contracts && contracts.length > 0 && <>
               <hr />
