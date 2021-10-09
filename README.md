@@ -9,7 +9,7 @@
 * [ ] enable metamask integration
 * [ ] enable use of multiple signers (donor, bundle signer)
 * [ ] enable type detection for calls
-* [ ] enable param detection & inputs
+* [x] enable param detection & inputs
 * [ ] enable sends
 * [ ] create an ordered list for transactions
 * [ ] send transactions from the ordered list in nonce-assigned order
