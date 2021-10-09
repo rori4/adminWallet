@@ -31,7 +31,7 @@ const FunctionDrawer: FunctionComponent<{ contract: Contract, functionName: stri
 
     return (contract && rawArgs ? <Card>
       <Card.Body>
-        <p><strong>{functionName}</strong>{functionSpec && functionSpec.payable && <em style={{ color: 'green', padding: 6 }}>Payable</em>}</p>
+        <Card.Title>{functionName}{functionSpec && functionSpec.payable && <em style={{ color: 'green', padding: 6 }}>Payable</em>}</Card.Title>
         {rawArgs.map((arg, idx) => {
           let id = `${functionName}.${arg.name}`;
           return (<div key={idx}>

@@ -1,6 +1,5 @@
 import { Contract } from "ethers";
 import { getContractAbi } from "./etherscan";
-import { getContract } from "./contract";
 const cache = window.localStorage;
 
 const setItem = (key: string, value: any) => {
@@ -47,6 +46,7 @@ export const addContract = async (contractAddress: string) => {
         const artifact = await buildArtifact(contractAddress);
         setItem("contracts", [artifact]);
     }
+    return getContracts();
 }
 
 export const getContracts = (): Contract[] => {

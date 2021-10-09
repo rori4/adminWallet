@@ -3,6 +3,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   Button,
+  Card,
   Col,
   Container,
   Dropdown,
@@ -43,37 +44,59 @@ function App() {
       // setActiveContract(contract);
 
       // load contracts from cache
-      const contracts = getContracts();
-      console.log("contracts", contracts);
-      setContracts(contracts);
+      if (!contracts) {
+        const contracts = getContracts();
+        console.log("contracts", contracts);
+        setContracts(contracts);
+      }
     }
     load();
-  }, [activeContract]);
+  }, [activeContract, contracts]);
 
-  const addContract = () => {
-    if (contractAddress)
-      addContractToCache(contractAddress);
+  const addContract = async () => {
+    if (contractAddress) {
+      const freshContracts = await addContractToCache(contractAddress);
+      setContracts(freshContracts);
+    }
   }
 
   return (
     <div className="App">
       <Container>
         <Row>
+          <Col sm={4}>
+            <Card>
+              <Card.Body>
+                <Card.Title>Admin Controls</Card.Title>
+                <Button onClick={() => {flush(); setContracts(undefined); setActiveContract(undefined);}}>Flush Cache</Button>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+        <br />
+        <Row>
           <Col sm={6}>
             <h3>Contracts</h3>
             <Input label="Add Contract" value={contractAddress} setValue={setContractAddress} id="contractAddress" />
             <Button disabled={!contractAddress} size="sm" onClick={addContract}>Add Contract</Button>
-            <hr />
-            <Dropdown>
-              <Dropdown.Toggle variant="link" id="contract-dropdown">{activeContract?.address || "Choose a contract"}</Dropdown.Toggle>
-              <Dropdown.Menu>
-                {contracts?.map((contract, idx) => <Dropdown.Item key={idx} onClick={() => setActiveContract(contract)}>{contract.address}</Dropdown.Item>)}
-              </Dropdown.Menu>
-            </Dropdown>
+            
+            {contracts && contracts.length > 0 && <>
+              <hr />
+              <Dropdown>
+                <Dropdown.Toggle variant="link" id="contract-dropdown">{activeContract?.address || "Choose a contract"}</Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {contracts.map((contract, idx) => <Dropdown.Item key={idx} onClick={() => setActiveContract(contract)}>{contract.address}</Dropdown.Item>)}
+                </Dropdown.Menu>
+              </Dropdown>
+            </>}
             {
               activeContract && <>
-              <code>{activeContract.address}</code>
-              {console.log(activeContract)}
+              <Card>
+                <Card.Body>
+                  <Card.Title>Contract Address</Card.Title>
+                  <code>{activeContract.address}</code>
+                </Card.Body>
+              </Card>
               {Object.keys(activeContract.interface.functions)
                 .filter(key => key.endsWith(")"))
                 .map((functionName, idx) => (
