@@ -12,10 +12,11 @@ import { Contract } from 'ethers';
 // import detectEthereumProvider from '@metamask/detect-provider';
 
 // components
+import AdminControls from './components/AdminControls';
 import Contracts from './components/Contracts';
 
 // lib
-import { getContracts, flush } from "./lib/cache";
+import { getContracts } from "./lib/cache";
 
 function App() {
   const [activeContract, setActiveContract] = useState<Contract>();
@@ -60,12 +61,7 @@ function App() {
           <Col sm={5}>
             <h3>Signers</h3>
             <hr />
-            <Card border="light" bg="secondary" text="light">
-              <Card.Body>
-                <Card.Title>Admin Controls</Card.Title>
-                <Button variant="danger" onClick={() => {flush(); setContracts(undefined); setActiveContract(undefined);}}>Flush Cache</Button>
-              </Card.Body>
-            </Card>
+            <AdminControls setContracts={setContracts} setActiveContract={setActiveContract} />
           </Col>
         </Row>
       </Container>
