@@ -2,18 +2,17 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {
-  Button,
-  Card,
   Col,
   Container,
   Row,
 } from "react-bootstrap";
-import { Contract } from 'ethers';
+import { Contract, Wallet } from 'ethers';
 // import detectEthereumProvider from '@metamask/detect-provider';
 
 // components
 import AdminControls from './components/AdminControls';
 import Contracts from './components/Contracts';
+import Signers from './components/Signers';
 
 // lib
 import { getContracts } from "./lib/cache";
@@ -22,6 +21,7 @@ function App() {
   const [activeContract, setActiveContract] = useState<Contract>();
   
   const [contracts, setContracts] = useState<Contract[]>();
+  const [signers, setSigners] = useState<Wallet[]>();
   // const [provider, setProvider] = useState<providers.JsonRpcProvider>();
 
   useEffect(() => {
@@ -33,9 +33,6 @@ function App() {
       //   const ethersProvider = new providers.JsonRpcProvider(provider.)
       //   setProvider(provider);
       // }
-
-      // flush cache for testing
-      // flush();
 
       // test with wETH
       // const contract = await getContract("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2");
@@ -59,7 +56,7 @@ function App() {
             <Contracts contracts={contracts} setContracts={setContracts} activeContract={activeContract} setActiveContract={setActiveContract} />
           </Col>
           <Col sm={5}>
-            <h3>Signers</h3>
+            <Signers signers={signers} setSigners={setSigners} />
             <hr />
             <AdminControls setContracts={setContracts} setActiveContract={setActiveContract} />
           </Col>
