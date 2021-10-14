@@ -55,7 +55,7 @@ const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, 
                 .filter(key => key.endsWith(")"))
                 .map((functionName, idx) => (
                     <div key={idx}>
-                    <FunctionDrawer functionName={functionName} contract={activeContract} provider={provider} />
+                        <FunctionDrawer functionName={functionName} contract={activeContract} provider={provider} />
                     </div>
                 ))}
             </Card.Body>

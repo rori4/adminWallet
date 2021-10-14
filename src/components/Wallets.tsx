@@ -24,8 +24,8 @@ const Wallets: FunctionComponent<WalletsProps> = ({wallets, setWallets}) => {
             }
             // hardhat private key
             // ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
-            
         }
+
         return (<>
             <Input value={walletName} setValue={setWalletName} id="wallet-name" inputProps={{placeholder: "nickname", autoComplete: "off"}} />
             <Input value={privateKey} setValue={setPrivateKey} id="private-key" inputProps={{type: "password", placeholder: "private key", autoComplete: "off"}} />
@@ -44,7 +44,6 @@ const Wallets: FunctionComponent<WalletsProps> = ({wallets, setWallets}) => {
                     <p key={idx}>{wallet.wallet.address}</p>
                 </Card.Body>
             </Card>
-            
         ))}
     </>)
 };

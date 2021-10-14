@@ -15,7 +15,7 @@ const triggerCall = async (contract: Contract, functionName: string, args: any[]
 
 type FunctionDrawerProps = {
   contract: Contract, 
-  functionName: string, 
+  functionName: string,
   provider: providers.BaseProvider | providers.JsonRpcProvider,
 }
 
@@ -25,6 +25,16 @@ const FunctionDrawer: FunctionComponent<FunctionDrawerProps> = ({ contract, func
     const [result, setResult] = useState<string>();
     const rawArgs = contract.interface.fragments.find(fragment => functionName.startsWith(fragment.name))?.inputs;
     const functionSpec = contract.interface.getFunction(functionName);
+    console.log("function", functionSpec);
+
+    const buttonAction = (isCall: boolean) => {
+      if (isCall) {
+        console.log("CALLING DIRECTLY");
+        triggerCall(contract, functionName, args, setResult, provider)
+      } else {
+        console.log("ADD TO QUEUE");
+      }
+    }
 
     useEffect(() => {
       // read function params, make inputs for each and assign values to args
@@ -49,7 +59,7 @@ const FunctionDrawer: FunctionComponent<FunctionDrawerProps> = ({ contract, func
           </div>)
         })}
         {result && <p><code>{result}</code></p>}
-        <Button variant="link" onClick={() => triggerCall(contract, functionName, args, setResult, provider)}>{functionName}</Button>
+        <Button variant="link" onClick={() => buttonAction(functionSpec.constant)}>{functionName}</Button>
       </Card.Body>
     </Card> : <></>
     )
