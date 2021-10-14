@@ -5,7 +5,7 @@ import Button from "react-bootstrap/Button";
 import Input from './Input';
 
 // lib
-import {addWallet as addWalletToCache, WalletResponse} from "../lib/cache";
+import { addWallet as addWalletToCache, WalletResponse } from "../lib/cache/wallets";
 import { Card } from 'react-bootstrap';
 
 type WalletsProps = {

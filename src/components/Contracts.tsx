@@ -2,23 +2,24 @@ import React, { FunctionComponent, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Dropdown from "react-bootstrap/Dropdown";
-import { Contract } from "ethers";
+import { Contract, providers } from "ethers";
 
 // components
 import FunctionDrawer from "./FunctionDrawer";
 import Input from "./Input";
 
 // lib
-import { addContract as addContractToCache } from "../lib/cache";
+import { addContract as addContractToCache, ContractResponse } from "../lib/cache/contracts";
 
 type ContractsProps = {
-    contracts?: Contract[],
+    contracts?: ContractResponse[],
     setContracts: Function,
     activeContract?: Contract,
     setActiveContract: Function,
+    provider: providers.BaseProvider | providers.JsonRpcProvider,
 }
 
-const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, activeContract, setActiveContract}) => {
+const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, activeContract, setActiveContract, provider}) => {
     const [contractAddress, setContractAddress] = useState<string>();
     const addContract = async () => {
         if (contractAddress) {
@@ -36,7 +37,7 @@ const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, 
         <Dropdown style={{marginBottom: 16}}>
             <Dropdown.Toggle variant="link" id="contract-dropdown">{activeContract?.address || "Choose a contract"}</Dropdown.Toggle>
             <Dropdown.Menu>
-                {contracts.map((contract, idx) => <Dropdown.Item key={idx} onClick={() => setActiveContract(contract)}>{contract.address}</Dropdown.Item>)}
+                {contracts.map((contract, idx) => <Dropdown.Item key={idx} onClick={() => setActiveContract(contract.contract)}>{contract.contract.address}{contract.name && `(${contract.name})`}</Dropdown.Item>)}
             </Dropdown.Menu>
         </Dropdown>
     </>}
@@ -54,7 +55,7 @@ const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, 
                 .filter(key => key.endsWith(")"))
                 .map((functionName, idx) => (
                     <div key={idx}>
-                    <FunctionDrawer functionName={functionName} contract={activeContract} />
+                    <FunctionDrawer functionName={functionName} contract={activeContract} provider={provider} />
                     </div>
                 ))}
             </Card.Body>

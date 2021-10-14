@@ -2,18 +2,24 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Contract, utils, providers } from "ethers";
 import { Button, Card } from "react-bootstrap";
 
-const triggerCall = async (contract: Contract, functionName: string, args: any[], setResult: Function) => {
+const triggerCall = async (contract: Contract, functionName: string, args: any[], setResult: Function, provider: providers.BaseProvider) => {
     const trueName = contract.interface.getFunction(functionName).name;
     const tx = await contract.populateTransaction[trueName](...args);
-    const res = await providers.getDefaultProvider().call(tx);
+    const res = await provider.call(tx);
     try {
       setResult(utils.toUtf8String(res));
     } catch (e) {
       setResult(res.toString());
     }
-  }
+};
 
-const FunctionDrawer: FunctionComponent<{ contract: Contract, functionName: string }> = ({ contract, functionName }) => {
+type FunctionDrawerProps = {
+  contract: Contract, 
+  functionName: string, 
+  provider: providers.BaseProvider | providers.JsonRpcProvider,
+}
+
+const FunctionDrawer: FunctionComponent<FunctionDrawerProps> = ({ contract, functionName, provider }) => {
     // stores input values
     const [args, setArgs] = useState<string[]>([]);
     const [result, setResult] = useState<string>();
@@ -43,7 +49,7 @@ const FunctionDrawer: FunctionComponent<{ contract: Contract, functionName: stri
           </div>)
         })}
         {result && <p><code>{result}</code></p>}
-        <Button variant="link" onClick={() => triggerCall(contract, functionName, args, setResult)}>{functionName}</Button>
+        <Button variant="link" onClick={() => triggerCall(contract, functionName, args, setResult, provider)}>{functionName}</Button>
       </Card.Body>
     </Card> : <></>
     )
