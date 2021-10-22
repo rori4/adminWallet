@@ -25,7 +25,6 @@ const FunctionDrawer: FunctionComponent<FunctionDrawerProps> = ({ contract, func
     const [result, setResult] = useState<string>();
     const rawArgs = contract.interface.fragments.find(fragment => functionName.startsWith(fragment.name))?.inputs;
     const functionSpec = contract.interface.getFunction(functionName);
-    console.log("function", functionSpec);
 
     const buttonAction = (isCall: boolean) => {
       if (isCall) {
@@ -48,6 +47,7 @@ const FunctionDrawer: FunctionComponent<FunctionDrawerProps> = ({ contract, func
     return (contract && rawArgs ? <Card border="light">
       <Card.Body>
         <Card.Title>{functionName}{functionSpec && functionSpec.payable && <em style={{ color: 'green', padding: 6 }}>Payable</em>}</Card.Title>
+        <Card.Subtitle>{functionSpec.constant ? "Call" : "Send"}</Card.Subtitle>
         {rawArgs.map((arg, idx) => {
           let id = `${functionName}.${arg.name}`;
           return (<div key={idx}>

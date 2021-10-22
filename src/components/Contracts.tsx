@@ -19,6 +19,10 @@ type ContractsProps = {
     provider: providers.BaseProvider | providers.JsonRpcProvider,
 }
 
+const isCall = (contract: Contract, functionName: string) => (
+    contract.interface.getFunction(functionName).constant
+)
+
 const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, activeContract, setActiveContract, provider}) => {
     const [contractAddress, setContractAddress] = useState<string>();
     const addContract = async () => {
@@ -31,7 +35,7 @@ const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, 
     <h3>Contracts</h3>
     <Input label="Add Contract" value={contractAddress} setValue={setContractAddress} id="contractAddress" inputProps={{placeholder: "contract address"}} />
     <Button disabled={!contractAddress} size="sm" onClick={() => {addContract(); setContractAddress(undefined);}}>Add Contract</Button>
-    
+
     {contracts && contracts.length > 0 && <>
         <hr />
         <Dropdown style={{marginBottom: 16}}>
@@ -53,6 +57,7 @@ const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, 
                 </Card>
                 {Object.keys(activeContract.interface.functions)
                 .filter(key => key.endsWith(")"))
+                .sort((aName, bName) => (isCall(activeContract, aName) === isCall(activeContract, bName) ? 0 : isCall(activeContract, aName) ? -1 : 1))
                 .map((functionName, idx) => (
                     <div key={idx}>
                         <FunctionDrawer functionName={functionName} contract={activeContract} provider={provider} />
