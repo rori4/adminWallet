@@ -14,10 +14,10 @@ type WalletsProps = {
 }
 
 const Wallets: FunctionComponent<WalletsProps> = ({wallets, setWallets}) => {
-    const NewSigner = () => {
+    const NewWallet = () => {
         const [walletName, setWalletName] = useState<string>();
         const [privateKey, setPrivateKey] = useState<string>();
-        const addSigner = async () => {
+        const addWallet = async () => {
             if (privateKey) {
                 let freshWallets = await addWalletToCache(privateKey, walletName);
                 setWallets(freshWallets);
@@ -29,23 +29,25 @@ const Wallets: FunctionComponent<WalletsProps> = ({wallets, setWallets}) => {
         return (<>
             <Input value={walletName} setValue={setWalletName} id="wallet-name" inputProps={{placeholder: "nickname", autoComplete: "off"}} />
             <Input value={privateKey} setValue={setPrivateKey} id="private-key" inputProps={{type: "password", placeholder: "private key", autoComplete: "off"}} />
-            <Button onClick={addSigner} disabled={!privateKey}>Add Signer</Button>
+            <Button onClick={addWallet} disabled={!privateKey}>Add Wallet</Button>
         </>)
     }
 
-    return (<>
-        <h3>Wallets</h3>
-        <NewSigner />
-        <hr />
-        {wallets && wallets.map((wallet, idx) => (
-            <Card key={idx}>
-                <Card.Body>
-                    {wallet.name && <Card.Title>{wallet.name}</Card.Title>}
-                    <p key={idx}>{wallet.wallet.address}</p>
-                </Card.Body>
-            </Card>
-        ))}
-    </>)
+    return (<Card>
+        <Card.Body>
+            <h3>Wallets</h3>
+            <NewWallet />
+            <hr />
+            {wallets && wallets.map((wallet, idx) => (
+                <Card key={idx}>
+                    <Card.Body>
+                        {wallet.name && <Card.Title>{wallet.name}</Card.Title>}
+                        <p key={idx}>{wallet.wallet.address}</p>
+                    </Card.Body>
+                </Card>
+            ))}
+        </Card.Body>
+    </Card>)
 };
 
 export default Wallets;
