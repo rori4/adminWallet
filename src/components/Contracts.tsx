@@ -10,6 +10,7 @@ import Input from "./Input";
 
 // lib
 import { addContract as addContractToCache, ContractResponse } from "../lib/cache/contracts";
+import { WalletResponse } from "../lib/cache/wallets";
 
 type ContractsProps = {
     contracts?: ContractResponse[],
@@ -17,13 +18,15 @@ type ContractsProps = {
     activeContract?: Contract,
     setActiveContract: Function,
     provider: providers.BaseProvider | providers.JsonRpcProvider,
+    queueTx: Function,
+    wallets: WalletResponse[],
 }
 
 const isCall = (contract: Contract, functionName: string) => (
     contract.interface.getFunction(functionName).constant
 )
 
-const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, activeContract, setActiveContract, provider}) => {
+const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, activeContract, setActiveContract, provider, queueTx, wallets}) => {
     const [contractAddress, setContractAddress] = useState<string>();
     const addContract = async () => {
         if (contractAddress) {
@@ -60,7 +63,13 @@ const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, 
                 .sort((aName, bName) => (isCall(activeContract, aName) === isCall(activeContract, bName) ? 0 : isCall(activeContract, aName) ? -1 : 1))
                 .map((functionName, idx) => (
                     <div key={idx}>
-                        <FunctionDrawer functionName={functionName} contract={activeContract} provider={provider} />
+                        <FunctionDrawer 
+                            functionName={functionName} 
+                            contract={activeContract} 
+                            provider={provider} 
+                            queueTx={queueTx} 
+                            wallets={wallets}
+                        />
                     </div>
                 ))}
             </Card.Body>

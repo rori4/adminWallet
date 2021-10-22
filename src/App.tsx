@@ -6,7 +6,7 @@ import {
   Container,
   Row,
 } from "react-bootstrap";
-import { Contract } from 'ethers';
+import { Contract, UnsignedTransaction } from 'ethers';
 
 // components
 import AdminControls from './components/AdminControls';
@@ -17,13 +17,26 @@ import Wallets from './components/Wallets';
 import { ContractResponse, getContracts } from './lib/cache/contracts';
 import { getWallets, WalletResponse } from './lib/cache/wallets';
 import { getProvider } from './lib/provider';
+import { buildSignedTransaction, EthProvider } from "./lib/ethereum";
+
 
 function App() {
   const [activeContract, setActiveContract] = useState<Contract>();
   
   const [contracts, setContracts] = useState<ContractResponse[]>();
-  const [wallets, setWallets] = useState<WalletResponse[]>();
+  const [wallets, setWallets] = useState<WalletResponse[]>([]);
+  const [txQueue, setTxQueue] = useState<string[]>([]);
   const provider = getProvider();
+
+  const queueTx = async (contract: Contract, functionName: string, args: string[], provider: EthProvider, wallet: WalletResponse) => {
+    // build raw transaction and add it to queue
+    const signedTx = await buildSignedTransaction(contract, functionName, args, wallet.wallet.connect(provider), txQueue.length);
+    const newQueue = txQueue;
+    newQueue.push(signedTx);
+    setTxQueue(newQueue);
+    console.log(signedTx);
+    console.log(newQueue);
+  }
 
   useEffect(() => {
     async function load() {
@@ -32,26 +45,32 @@ function App() {
       // setActiveContract(contract);
 
       // load contracts from cache
-      if (!contracts) {
-        const contracts = await getContracts();
-        console.log("contracts", contracts);
-        setContracts(contracts);
-      }
-      if (!wallets) {
-        const wallets = getWallets();
-        console.log("wallets", wallets);
-        setWallets(wallets);
-      }
+      const contracts = await getContracts();
+      console.log("contracts", contracts);
+      setContracts(contracts);
+      
+      // load wallets from cache
+      const wallets = getWallets();
+      console.log("wallets", wallets);
+      setWallets(wallets);
     }
     load();
-  }, [activeContract, contracts, wallets]);
+  }, [activeContract]);
 
   return (
     <div className="App">
       <Container>
         <Row>
           <Col sm={7}>
-            <Contracts contracts={contracts} setContracts={setContracts} activeContract={activeContract} setActiveContract={setActiveContract} provider={provider} />
+            <Contracts 
+              contracts={contracts} 
+              setContracts={setContracts} 
+              activeContract={activeContract} 
+              setActiveContract={setActiveContract} 
+              provider={provider} 
+              queueTx={queueTx} 
+              wallets={wallets}
+            />
           </Col>
           <Col sm={5}>
             <Wallets wallets={wallets} setWallets={setWallets} />

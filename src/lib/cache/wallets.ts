@@ -16,11 +16,13 @@ export type WalletResponse = {
 export const getWallets = (): WalletResponse[] => {
     const artifacts: WalletArtifact[] = getItem("wallets");
     if (artifacts) {
+        console.log("found wallets")
         return artifacts.map(artifact => ({
             name: artifact.name,
             wallet: new Wallet(artifact.privateKey),
         }))
     } else {
+        console.log("found no wallets")
         return [];
     }
 }

@@ -1,28 +1,25 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Contract, utils, providers } from "ethers";
+import { Contract } from "ethers";
 import { Button, Card } from "react-bootstrap";
 
-const triggerCall = async (contract: Contract, functionName: string, args: any[], setResult: Function, provider: providers.BaseProvider) => {
-    const trueName = contract.interface.getFunction(functionName).name;
-    const tx = await contract.populateTransaction[trueName](...args);
-    const res = await provider.call(tx);
-    try {
-      setResult(utils.toUtf8String(res));
-    } catch (e) {
-      setResult(res.toString());
-    }
-};
+// lib
+import { WalletResponse } from '../lib/cache/wallets';
+import WalletDropdown from './WalletDropdown';
+import { triggerCall, EthProvider } from "../lib/ethereum";
 
 type FunctionDrawerProps = {
   contract: Contract, 
   functionName: string,
-  provider: providers.BaseProvider | providers.JsonRpcProvider,
+  provider: EthProvider,
+  queueTx: Function,
+  wallets: WalletResponse[],
 }
 
-const FunctionDrawer: FunctionComponent<FunctionDrawerProps> = ({ contract, functionName, provider }) => {
+const FunctionDrawer: FunctionComponent<FunctionDrawerProps> = ({ contract, functionName, provider, queueTx, wallets }) => {
     // stores input values
     const [args, setArgs] = useState<string[]>([]);
     const [result, setResult] = useState<string>();
+    const [chosenWallet, setChosenWallet] = useState<WalletResponse>();
     const rawArgs = contract.interface.fragments.find(fragment => functionName.startsWith(fragment.name))?.inputs;
     const functionSpec = contract.interface.getFunction(functionName);
 
@@ -31,7 +28,8 @@ const FunctionDrawer: FunctionComponent<FunctionDrawerProps> = ({ contract, func
         console.log("CALLING DIRECTLY");
         triggerCall(contract, functionName, args, setResult, provider)
       } else {
-        console.log("ADD TO QUEUE");
+        console.log("ADDING TX TO QUEUE");
+        queueTx(contract, functionName, args, provider, chosenWallet);
       }
     }
 
@@ -59,7 +57,8 @@ const FunctionDrawer: FunctionComponent<FunctionDrawerProps> = ({ contract, func
           </div>)
         })}
         {result && <p><code>{result}</code></p>}
-        <Button variant="link" onClick={() => buttonAction(functionSpec.constant)}>{functionName}</Button>
+        {!functionSpec.constant && <WalletDropdown wallets={wallets} setWallet={setChosenWallet} />}
+        <Button disabled={!functionSpec.constant && !chosenWallet} variant="link" onClick={() => buttonAction(functionSpec.constant)}>{functionName}</Button>
       </Card.Body>
     </Card> : <></>
     )
