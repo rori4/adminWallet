@@ -7,6 +7,7 @@ import { Contract, providers } from "ethers";
 // components
 import FunctionDrawer from "./FunctionDrawer";
 import Input from "./Input";
+import { getContractName } from "./helpers";
 
 // lib
 import { addContract as addContractToCache, ContractResponse } from "../lib/cache/contracts";
@@ -52,6 +53,7 @@ const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, 
         activeContract && <>
         <Card>
             <Card.Body>
+                <Card.Title>{getContractName(activeContract.address, contracts || [])}</Card.Title>
                 <Card border="light">
                     <Card.Body>
                         <Card.Title>Contract Address</Card.Title>

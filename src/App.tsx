@@ -6,35 +6,41 @@ import {
   Container,
   Row,
 } from "react-bootstrap";
-import { Contract, UnsignedTransaction } from 'ethers';
+import { Contract } from 'ethers';
 
 // components
 import AdminControls from './components/AdminControls';
 import Contracts from './components/Contracts';
 import Wallets from './components/Wallets';
+import TxQueue, { QueuedTx } from './components/TxQueue';
+import { getContractName } from './components/helpers';
 
 // lib
 import { ContractResponse, getContracts } from './lib/cache/contracts';
 import { getWallets, WalletResponse } from './lib/cache/wallets';
 import { getProvider } from './lib/provider';
-import { buildSignedTransaction, EthProvider } from "./lib/ethereum";
-
+import { buildSignedTransaction, getTrueName, EthProvider } from "./lib/ethereum";
 
 function App() {
   const [activeContract, setActiveContract] = useState<Contract>();
   
   const [contracts, setContracts] = useState<ContractResponse[]>();
   const [wallets, setWallets] = useState<WalletResponse[]>([]);
-  const [txQueue, setTxQueue] = useState<string[]>([]);
+  const [txQueue, setTxQueue] = useState<QueuedTx[]>([]);
   const provider = getProvider();
 
   const queueTx = async (contract: Contract, functionName: string, args: string[], provider: EthProvider, wallet: WalletResponse) => {
     // build raw transaction and add it to queue
     const signedTx = await buildSignedTransaction(contract, functionName, args, wallet.wallet.connect(provider), txQueue.length);
-    const newQueue = txQueue;
-    newQueue.push(signedTx);
+    const newQueue = [...txQueue];
+    newQueue.push({
+      wallet,
+      functionName: getTrueName(contract, functionName),
+      contractName: getContractName(contract.address, contracts || []),
+      signedTx,
+      args,
+    });
     setTxQueue(newQueue);
-    console.log(signedTx);
     console.log(newQueue);
   }
 
@@ -43,19 +49,18 @@ function App() {
       // test with wETH
       // const contract = await getContract("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2");
       // setActiveContract(contract);
+      console.log("loading cached data");
 
       // load contracts from cache
       const contracts = await getContracts();
-      console.log("contracts", contracts);
       setContracts(contracts);
       
       // load wallets from cache
       const wallets = getWallets();
-      console.log("wallets", wallets);
       setWallets(wallets);
     }
     load();
-  }, [activeContract]);
+  }, []);
 
   return (
     <div className="App">
@@ -76,6 +81,8 @@ function App() {
             <Wallets wallets={wallets} setWallets={setWallets} />
             <hr />
             <AdminControls setContracts={setContracts} setActiveContract={setActiveContract} />
+            <hr />
+            <TxQueue transactions={txQueue} />
           </Col>
         </Row>
       </Container>

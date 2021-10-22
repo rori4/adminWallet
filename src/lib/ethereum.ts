@@ -26,8 +26,7 @@ const buildSignedTransaction = async (contract: Contract, functionName: string, 
         from: tx.from || wallet.address,
         nonce: startNonce + nonceDelta,
     };
-    console.log(tx);
     return await wallet.signTransaction(tx);
 };
 
-export { triggerCall, buildSignedTransaction };
+export { getTrueName, triggerCall, buildSignedTransaction };
