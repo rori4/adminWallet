@@ -6,7 +6,7 @@ import {
   Container,
   Row,
 } from "react-bootstrap";
-import { Contract } from 'ethers';
+import { BigNumber, Contract } from 'ethers';
 
 // components
 import AdminControls from './components/AdminControls';
@@ -29,9 +29,16 @@ function App() {
   const [txQueue, setTxQueue] = useState<QueuedTx[]>([]);
   const provider = getProvider();
 
-  const queueTx = async (contract: Contract, functionName: string, args: string[], provider: EthProvider, wallet: WalletResponse) => {
+  const queueTx = async (contract: Contract, functionName: string, args: string[], provider: EthProvider, wallet: WalletResponse, value?: string) => {
     // build raw transaction and add it to queue
-    const signedTx = await buildSignedTransaction(contract, functionName, args, wallet.wallet.connect(provider), txQueue.length);
+    const signedTx = await buildSignedTransaction({
+      contract, 
+      functionName, 
+      args, 
+      wallet: wallet.wallet.connect(provider), 
+      nonceDelta: txQueue.length,
+      value: value ? BigNumber.from(value) : BigNumber.from(0),
+    });
     const newQueue = [...txQueue];
     newQueue.push({
       wallet,

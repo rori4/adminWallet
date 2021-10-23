@@ -1,8 +1,10 @@
 import React, {FunctionComponent} from 'react'
+import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 
 // lib
 import { WalletResponse } from "../lib/cache/wallets";
+import { sendMempoolBundle } from '../lib/ethereum';
 
 export type QueuedTx = {
     wallet: WalletResponse,
@@ -17,7 +19,9 @@ type TxQueueProps = {
 }
 
 const TxQueue: FunctionComponent<TxQueueProps> = ({transactions}) => {
-
+    const sendBundle = () => {
+        sendMempoolBundle(transactions.map(queuedTx => queuedTx.signedTx));
+    }
     return (<Card>
         <Card.Body>
             <h3>Transactions</h3>
@@ -38,6 +42,7 @@ const TxQueue: FunctionComponent<TxQueueProps> = ({transactions}) => {
                     </Card>
                 ))
             }
+            <Button onClick={sendBundle} disabled={!transactions || transactions.length === 0}>Send Bundle</Button>
         </Card.Body>
     </Card>);
 }

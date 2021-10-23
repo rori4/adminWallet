@@ -2,6 +2,9 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Contract } from "ethers";
 import { Button, Card } from "react-bootstrap";
 
+// app components
+import Input from './Input';
+
 // lib
 import { WalletResponse } from '../lib/cache/wallets';
 import WalletDropdown from './WalletDropdown';
@@ -18,6 +21,7 @@ type FunctionDrawerProps = {
 const FunctionDrawer: FunctionComponent<FunctionDrawerProps> = ({ contract, functionName, provider, queueTx, wallets }) => {
     // stores input values
     const [args, setArgs] = useState<string[]>([]);
+    const [ethValue, setEthValue] = useState<string>(); // value for payable functions
     const [result, setResult] = useState<string>();
     const [chosenWallet, setChosenWallet] = useState<WalletResponse>();
     const rawArgs = contract.interface.fragments.find(fragment => functionName.startsWith(fragment.name))?.inputs;
@@ -29,7 +33,7 @@ const FunctionDrawer: FunctionComponent<FunctionDrawerProps> = ({ contract, func
         triggerCall(contract, functionName, args, setResult, provider)
       } else {
         console.log("ADDING TX TO QUEUE");
-        queueTx(contract, functionName, args, provider, chosenWallet);
+        queueTx(contract, functionName, args, provider, chosenWallet, ethValue);
       }
     }
 
@@ -46,6 +50,7 @@ const FunctionDrawer: FunctionComponent<FunctionDrawerProps> = ({ contract, func
       <Card.Body>
         <Card.Title>{functionName}{functionSpec && functionSpec.payable && <em style={{ color: 'green', padding: 6 }}>Payable</em>}</Card.Title>
         <Card.Subtitle>{functionSpec.constant ? "Call" : "Send"}</Card.Subtitle>
+        {functionSpec.payable && <Input id={`${functionName}_value`} value={ethValue} setValue={setEthValue} inputProps={{placeholder: "ETH amount (wei)"}} />}
         {rawArgs.map((arg, idx) => {
           let id = `${functionName}.${arg.name}`;
           return (<div key={idx}>
