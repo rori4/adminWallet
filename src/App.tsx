@@ -19,7 +19,7 @@ import { getContractName } from './components/helpers';
 import { ContractResponse, getContracts } from './lib/cache/contracts';
 import { getWallets, WalletResponse } from './lib/cache/wallets';
 import { getProvider } from './lib/provider';
-import { buildSignedTransaction, getTrueName, EthProvider } from "./lib/ethereum";
+import { buildUnsignedTransaction, getTrueName, EthProvider } from "./lib/ethereum";
 
 function App() {
   const [activeContract, setActiveContract] = useState<Contract>();
@@ -31,7 +31,7 @@ function App() {
 
   const queueTx = async (contract: Contract, functionName: string, args: string[], provider: EthProvider, wallet: WalletResponse, value?: string) => {
     // build raw transaction and add it to queue
-    const signedTx = await buildSignedTransaction({
+    const unsignedTx = await buildUnsignedTransaction({
       contract, 
       functionName, 
       args, 
@@ -44,7 +44,7 @@ function App() {
       wallet,
       functionName: getTrueName(contract, functionName),
       contractName: getContractName(contract.address, contracts || []),
-      signedTx,
+      tx: unsignedTx,
       args,
     });
     setTxQueue(newQueue);

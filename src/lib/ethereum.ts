@@ -1,5 +1,8 @@
 import { BigNumber, Contract, Wallet, providers } from "ethers";
+
+// lib
 import { getProvider } from "./provider";
+import { QueuedTx } from "../components/TxQueue";
 
 export type EthProvider = providers.BaseProvider | providers.JsonRpcProvider;
 
@@ -17,7 +20,7 @@ export const triggerCall = async (contract: Contract, functionName: string, args
     setResult(decodedRes.toString());
 };
 
-type SignedTransactionRequest = {
+type AppTransactionRequest = {
     args: string[], 
     contract: Contract, 
     functionName: string, 
@@ -28,7 +31,7 @@ type SignedTransactionRequest = {
     wallet: Wallet, 
 }
 
-export const buildSignedTransaction = async (params: SignedTransactionRequest) => {
+export const buildUnsignedTransaction = async (params: AppTransactionRequest): Promise<providers.TransactionRequest> => {
     const {contract,
         functionName,
         args,
@@ -55,17 +58,24 @@ export const buildSignedTransaction = async (params: SignedTransactionRequest) =
         value,
     };
     console.log("tx", tx);
-    return await wallet.signTransaction(tx);
+    return tx;
 };
 
-export const sendMempoolBundle = async (signedTransactions: string[]) => {
-  const provider = getProvider();
-  // send each transaction asynchronously
-  const txPromises = signedTransactions.map(tx => {
-    return provider.sendTransaction(tx);
-  });
+export const sendMempoolBundle = async (unsignedTransactions: QueuedTx[]) => {
+    // TODO: assign fresh gas price to all transactions here
+    ///
 
-  Promise.all(txPromises).then(txResults => {
-    console.log(txResults);
-  })
+    // sign transactions
+    const signedTransactionsPromises = unsignedTransactions.map(tx => tx.wallet.wallet.signTransaction(tx.tx));
+    Promise.all(signedTransactionsPromises).then(signedTransactions => {
+        const provider = getProvider();
+        // send each transaction asynchronously
+        const txPromises = signedTransactions.map(tx => {
+            return provider.sendTransaction(tx);
+        });
+    
+        Promise.all(txPromises).then(txResults => {
+            console.log(txResults);
+        });
+    });
 };

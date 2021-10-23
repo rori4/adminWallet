@@ -1,6 +1,7 @@
 import React, {FunctionComponent} from 'react'
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
+import { providers } from "ethers";
 
 // lib
 import { WalletResponse } from "../lib/cache/wallets";
@@ -11,7 +12,7 @@ export type QueuedTx = {
     contractName: string,
     functionName: string,
     args: string[],
-    signedTx: string,
+    tx: providers.TransactionRequest,
 };
 
 type TxQueueProps = {
@@ -21,7 +22,7 @@ type TxQueueProps = {
 
 const TxQueue: FunctionComponent<TxQueueProps> = ({setTransactions, transactions}) => {
     const sendBundle = () => {
-        sendMempoolBundle(transactions.map(queuedTx => queuedTx.signedTx));
+        sendMempoolBundle(transactions);
     }
     const deleteBundle = () => {
         setTransactions([]);
