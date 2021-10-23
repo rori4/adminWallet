@@ -89,7 +89,7 @@ function App() {
             <hr />
             <AdminControls setContracts={setContracts} setActiveContract={setActiveContract} />
             <hr />
-            <TxQueue transactions={txQueue} />
+            <TxQueue transactions={txQueue} setTransactions={setTxQueue} />
           </Col>
         </Row>
       </Container>

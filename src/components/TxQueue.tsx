@@ -16,15 +16,20 @@ export type QueuedTx = {
 
 type TxQueueProps = {
     transactions: QueuedTx[],
+    setTransactions: Function,
 }
 
-const TxQueue: FunctionComponent<TxQueueProps> = ({transactions}) => {
+const TxQueue: FunctionComponent<TxQueueProps> = ({setTransactions, transactions}) => {
     const sendBundle = () => {
         sendMempoolBundle(transactions.map(queuedTx => queuedTx.signedTx));
+    }
+    const deleteBundle = () => {
+        setTransactions([]);
     }
     return (<Card>
         <Card.Body>
             <h3>Transactions</h3>
+            {transactions.length > 0 && <Button variant="outline-danger" onClick={deleteBundle}>Delete</Button>}
             {
                 transactions.map((tx, idx) => (
                     <Card key={idx}>
