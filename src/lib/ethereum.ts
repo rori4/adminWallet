@@ -31,6 +31,7 @@ type AppTransactionRequest = {
     wallet: Wallet, 
 }
 
+/// Builds a raw TransactionRequest.
 export const buildUnsignedTransaction = async (params: AppTransactionRequest): Promise<providers.TransactionRequest> => {
     const {contract,
         functionName,
@@ -56,13 +57,17 @@ export const buildUnsignedTransaction = async (params: AppTransactionRequest): P
     return tx;
 };
 
-export const sendMempoolBundle = async (unsignedTransactions: QueuedTx[], gasPriceOverride?: BigNumber) => {
-    // assign fresh gas prices
+/// Gets latest gas price from provider.
+const getLatestGasPrice = async () => {
     const provider = getProvider();
     const extra_gas = BigNumber.from(1e9).mul(20); // add 20 gwei to gas price
-    const gasPrice = gasPriceOverride ?? (await provider.getBlock(provider.getBlockNumber())).baseFeePerGas?.add(extra_gas);
-    console.log("gas price", gasPrice);
-    const updatedTransactions = unsignedTransactions.map(qtx => (
+    return (await provider.getBlock(provider.getBlockNumber())).baseFeePerGas?.add(extra_gas);
+}
+
+/// Gets latest gas price and returns transactions with updated gas prices.
+export const updateGasPrices = async (queuedTxs: QueuedTx[], gasPriceOverride?: BigNumber) => {
+    const gasPrice = gasPriceOverride ?? await getLatestGasPrice();
+    return queuedTxs.map(qtx => (
         {
             ...qtx,
             tx: {
@@ -70,7 +75,13 @@ export const sendMempoolBundle = async (unsignedTransactions: QueuedTx[], gasPri
                 gasPrice,
             }
         }
-        ));
+    ));
+}
+
+/// Sends transactions straight to the mempool (non-atomic).
+export const sendMempoolBundle = async (queuedTxs: QueuedTx[], gasPriceOverride?: BigNumber) => {
+    // assign fresh gas prices
+    const updatedTransactions = await updateGasPrices(queuedTxs, gasPriceOverride);
     // TODO: update nonces to all transactions here as well
 
     // sign transactions
