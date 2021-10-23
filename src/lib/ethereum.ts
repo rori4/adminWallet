@@ -38,22 +38,17 @@ export const buildUnsignedTransaction = async (params: AppTransactionRequest): P
         wallet,
         nonceDelta,
         gasLimitOverride,
-        gasPriceOverride,
         value
     } = params;
     const name = getTrueName(contract, functionName);
     let tx = await contract.populateTransaction[name](...args);
     const provider = getProvider();
     const startNonce = await wallet.connect(provider).getTransactionCount();
-    const extra_gas = BigNumber.from(1e9).mul(20); // add 20 gwei to gas price
-    const gasPrice = gasPriceOverride ?? (await provider.getBlock(provider.getBlockNumber())).baseFeePerGas?.add(extra_gas);
     const gasLimit = gasLimitOverride ?? (await provider.estimateGas(tx)).mul(2);
-    console.log("gas price", gasPrice);
     tx = {
         ...tx,
         from: tx.from || wallet.address,
         nonce: startNonce + nonceDelta,
-        gasPrice,
         gasLimit,
         value,
     };
@@ -61,12 +56,25 @@ export const buildUnsignedTransaction = async (params: AppTransactionRequest): P
     return tx;
 };
 
-export const sendMempoolBundle = async (unsignedTransactions: QueuedTx[]) => {
-    // TODO: assign fresh gas price to all transactions here
-    ///
+export const sendMempoolBundle = async (unsignedTransactions: QueuedTx[], gasPriceOverride?: BigNumber) => {
+    // assign fresh gas prices
+    const provider = getProvider();
+    const extra_gas = BigNumber.from(1e9).mul(20); // add 20 gwei to gas price
+    const gasPrice = gasPriceOverride ?? (await provider.getBlock(provider.getBlockNumber())).baseFeePerGas?.add(extra_gas);
+    console.log("gas price", gasPrice);
+    const updatedTransactions = unsignedTransactions.map(qtx => (
+        {
+            ...qtx,
+            tx: {
+                ...qtx.tx,
+                gasPrice,
+            }
+        }
+        ));
+    // TODO: update nonces to all transactions here as well
 
     // sign transactions
-    const signedTransactionsPromises = unsignedTransactions.map(tx => tx.wallet.wallet.signTransaction(tx.tx));
+    const signedTransactionsPromises = updatedTransactions.map(tx => tx.wallet.wallet.signTransaction(tx.tx));
     Promise.all(signedTransactionsPromises).then(signedTransactions => {
         const provider = getProvider();
         // send each transaction asynchronously
