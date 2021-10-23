@@ -36,7 +36,7 @@ function App() {
       functionName, 
       args, 
       wallet: wallet.wallet.connect(provider), 
-      nonceDelta: txQueue.length,
+      nonceDelta: txQueue.filter(tx => tx.wallet === wallet).length,
       value: value ? BigNumber.from(value) : BigNumber.from(0),
     });
     const newQueue = [...txQueue];

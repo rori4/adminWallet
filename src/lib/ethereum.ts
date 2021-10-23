@@ -40,8 +40,8 @@ export const buildSignedTransaction = async (params: SignedTransactionRequest) =
     } = params;
     const name = getTrueName(contract, functionName);
     let tx = await contract.populateTransaction[name](...args);
-    const startNonce = await wallet.getTransactionCount();
     const provider = getProvider();
+    const startNonce = await wallet.connect(provider).getTransactionCount();
     const extra_gas = BigNumber.from(1e9).mul(20); // add 20 gwei to gas price
     const gasPrice = gasPriceOverride ?? (await provider.getBlock(provider.getBlockNumber())).baseFeePerGas?.add(extra_gas);
     const gasLimit = gasLimitOverride ?? (await provider.estimateGas(tx)).mul(2);

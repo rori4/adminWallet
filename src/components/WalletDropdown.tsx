@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { useState, FunctionComponent } from 'react';
 import Dropdown from "react-bootstrap/Dropdown";
 
 // lib
@@ -10,11 +10,15 @@ type WalletDropdownProps = {
 }
 
 const WalletDropdown: FunctionComponent<WalletDropdownProps> = ({wallets, setWallet}) => {
+    const [chosenWallet, setChosenWallet] = useState<WalletResponse>();
     return (<Dropdown>
-        <Dropdown.Toggle>Choose a Wallet</Dropdown.Toggle>
+        <Dropdown.Toggle>{chosenWallet ? chosenWallet.name : "Choose a Wallet"}</Dropdown.Toggle>
         <Dropdown.Menu>
             {wallets.map((wallet, idx) => (
-                <Dropdown.Item key={idx} onClick={() => setWallet(wallet)}>{wallet.name}</Dropdown.Item>
+                <Dropdown.Item key={idx} onClick={() => {
+                    setChosenWallet(wallet);
+                    setWallet(wallet);
+                }}>{wallet.name}</Dropdown.Item>
             ))}
             
         </Dropdown.Menu>
