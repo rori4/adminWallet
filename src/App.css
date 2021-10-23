@@ -38,3 +38,7 @@
     transform: rotate(360deg);
   }
 }
+
+.flashbots-outline {
+  background-color: #FBBC42;
+}

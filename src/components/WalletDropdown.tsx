@@ -7,12 +7,13 @@ import { WalletResponse } from '../lib/cache/wallets';
 type WalletDropdownProps = {
     wallets: WalletResponse[],
     setWallet: Function,
+    label?: string,
 }
 
-const WalletDropdown: FunctionComponent<WalletDropdownProps> = ({wallets, setWallet}) => {
+const WalletDropdown: FunctionComponent<WalletDropdownProps> = ({wallets, setWallet, label}) => {
     const [chosenWallet, setChosenWallet] = useState<WalletResponse>();
     return (<Dropdown>
-        <Dropdown.Toggle>{chosenWallet ? chosenWallet.name : "Choose a Wallet"}</Dropdown.Toggle>
+        <Dropdown.Toggle>{chosenWallet ? chosenWallet.name : label || "Choose a Wallet"}</Dropdown.Toggle>
         <Dropdown.Menu>
             {wallets.map((wallet, idx) => (
                 <Dropdown.Item key={idx} onClick={() => {

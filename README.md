@@ -19,4 +19,5 @@
 * [ ] make nonces dynamic
   * [ ] allow user to manually assign nonces in transaction queue (and/or a "refresh" button that auto-assigns all nonces based on tx count from provider)
 * [ ] send transactions through Flashbots
-  * No Flashbots RPC; send bundles via flashbots relay.
+  * [x] send bundles via flashbots relay.
+  * [ ] fuckin' CORS

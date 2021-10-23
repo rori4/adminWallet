@@ -1,4 +1,4 @@
-import { providers, BigNumber, Wallet } from "ethers";
+import { BigNumber, Wallet } from "ethers";
 import { FlashbotsBundleProvider, FlashbotsBundleResolution, FlashbotsBundleTransaction,  } from "@flashbots/ethers-provider-bundle";
 
 // lib
@@ -73,6 +73,7 @@ export const sendFlashbotsBundle = async (queuedTxs: QueuedTx[], sponsorWallet: 
     const provider = getProvider();
     const flashbotsProvider = await getFlashbotsProvider(sponsorWallet);
     provider.on('block', async (blockNumber) => {
+        console.log(`[BLOCK ${blockNumber}]`);
         const bundleTransactions = await buildFlashbotsBundle(queuedTxs);
         
         // simulate on every block
