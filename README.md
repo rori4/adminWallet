@@ -9,16 +9,14 @@
 * [x] build contracts from contract address & Etherscan ABI
 * [x] enable param detection & inputs
 * [x] enable use of multiple signers (e.g. "donor", "bundle signer")
-* [x] enable type detection for calls
+* [x] enable type detection (calls/sends)
 * [x] create an ordered list for transactions
 * [x] enable sends (add wallets)
 * [x] send transactions from the ordered list in nonce-assigned order
-* [ ] make nonces and gas prices dynamic (bugfixes)
-  * [ ] enable deletion of transactions from the queue, add trash can button to empty queue completely
-  * [ ] if a transaction is removed from the queue, adjust nonces of following transactions from that tx's sender
-  * [ ] set gas estimate and sign just before sending; store the unsigned tx instead of `signedTx`
+* [x] add trash can button to empty queue
+* [x] make gas prices dynamic
+  * [x] set gas estimate and sign just before sending; store the unsigned tx instead of `signedTx`
+* [ ] make nonces dynamic
+  * [ ] allow user to manually assign nonces in transaction queue (and/or a "refresh" button that auto-assigns all nonces based on tx count from provider)
 * [ ] send transactions through Flashbots
-  * maybe just make it easy for the user to switch networks and use the Flashbots RPC endpoint
-  * but how would bundles work if we were using flashbots RPC? Would the transactions still be mined atomically if we sent them individually?
-    * Doesn't sound like a good idea because if we send independent transactions right around the time a block is mined, some transactions could be split across 2 blocks, which defeats the purpose.
-  * CONCLUSION: No Flashbots RPC; send bundles via flashbots relay.
+  * No Flashbots RPC; send bundles via flashbots relay.
