@@ -1,6 +1,6 @@
 import { providers } from "ethers";
 import { getProviderUrl } from "./cache/provider";
-const { JsonRpcProvider } = providers;
+const { JsonRpcProvider, getDefaultProvider } = providers;
 
 /// Gets the provider URL provided by user, otherwise uses ethers default provider.
 const getProvider = () => {
@@ -8,7 +8,7 @@ const getProvider = () => {
     if (url) {
         return new JsonRpcProvider(url);
     } else {
-        return providers.getDefaultProvider();
+        return getDefaultProvider();
     }
 }
 
