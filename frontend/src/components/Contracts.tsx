@@ -36,49 +36,50 @@ const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, 
         }
       }
     return (<>
-    <h3>Contracts</h3>
-    <Input label="Add Contract" value={contractAddress} setValue={setContractAddress} id="contractAddress" inputProps={{placeholder: "contract address"}} />
-    <Button disabled={!contractAddress} size="sm" onClick={() => {addContract(); setContractAddress(undefined);}}>Add Contract</Button>
-
-    {contracts && contracts.length > 0 && <>
+        <h3>Contracts</h3>
+        <Input label="Add Contract" value={contractAddress} setValue={setContractAddress} id="contractAddress" inputProps={{placeholder: "Contract Address"}} />
+        <Button disabled={!contractAddress} size="sm" onClick={() => {addContract(); setContractAddress(undefined);}}>Add Contract</Button>
         <hr />
-        <Dropdown style={{marginBottom: 16}}>
-            <Dropdown.Toggle variant="link" id="contract-dropdown">{activeContract?.address || "Choose a contract"}</Dropdown.Toggle>
-            <Dropdown.Menu>
-                {contracts.map((contract, idx) => <Dropdown.Item key={idx} onClick={() => setActiveContract(contract.contract)}>
-                    <code>{contract.contract.address}{contract.name && ` (${contract.name})`}</code>
-                </Dropdown.Item>)}
-            </Dropdown.Menu>
-        </Dropdown>
-    </>}
-    {
-        activeContract && <>
-        <Card>
-            <Card.Body>
-                <Card.Title>{getContractName(activeContract.address, contracts || [])}</Card.Title>
-                <Card border="light">
-                    <Card.Body>
-                        <Card.Title>Contract Address</Card.Title>
-                        <code>{activeContract.address}</code>
-                    </Card.Body>
-                </Card>
-                {Object.keys(activeContract.interface.functions)
-                .filter(key => key.endsWith(")"))
-                .sort((aName, bName) => (isCall(activeContract, aName) === isCall(activeContract, bName) ? 0 : isCall(activeContract, aName) ? -1 : 1))
-                .map((functionName, idx) => (
-                    <div key={idx}>
-                        <FunctionDrawer 
-                            functionName={functionName} 
-                            contract={activeContract} 
-                            provider={provider} 
-                            queueTx={queueTx} 
-                            wallets={wallets}
-                        />
-                    </div>
-                ))}
-            </Card.Body>
-        </Card>
-    </>}
-</>)}
+        {contracts && contracts.length > 0 && <>
+            <hr />
+            <Dropdown style={{marginBottom: 16}}>
+                <Dropdown.Toggle variant="link" id="contract-dropdown">{activeContract?.address || "Choose a contract"}</Dropdown.Toggle>
+                <Dropdown.Menu>
+                    {contracts.map((contract, idx) => <Dropdown.Item key={idx} onClick={() => setActiveContract(contract.contract)}>
+                        <code>{contract.contract.address}{contract.name && ` (${contract.name})`}</code>
+                    </Dropdown.Item>)}
+                </Dropdown.Menu>
+            </Dropdown>
+        </>}
+        {
+            activeContract && <>
+            <Card>
+                <Card.Body>
+                    <Card.Title>{getContractName(activeContract.address, contracts || [])}</Card.Title>
+                    <Card border="light">
+                        <Card.Body>
+                            <Card.Title>Contract Address</Card.Title>
+                            <code>{activeContract.address}</code>
+                        </Card.Body>
+                    </Card>
+                    {Object.keys(activeContract.interface.functions)
+                    .filter(key => key.endsWith(")"))
+                    .sort((aName, bName) => (isCall(activeContract, aName) === isCall(activeContract, bName) ? 0 : isCall(activeContract, aName) ? -1 : 1))
+                    .map((functionName, idx) => (
+                        <div key={idx}>
+                            <FunctionDrawer 
+                                functionName={functionName} 
+                                contract={activeContract} 
+                                provider={provider} 
+                                queueTx={queueTx} 
+                                wallets={wallets}
+                            />
+                        </div>
+                    ))}
+                </Card.Body>
+            </Card>
+        </>}
+    </>)
+}
 
 export default Contracts;
