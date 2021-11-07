@@ -2,7 +2,6 @@ import React, { FunctionComponent, useState } from 'react';
 
 // components
 import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
 
 // lib
 import { flush } from "../lib/cache/cache";
@@ -22,16 +21,18 @@ const AdminControls: FunctionComponent<AdminControlsProps> = ({setContracts, set
         alert(`Provider set to ${providerUrl}`);
     }
 
-    return (
-    <Card border="light" bg="secondary" text="light">
-        <Card.Body>
-            <Card.Title>Admin Controls</Card.Title>
-            <Button variant="danger" onClick={() => {flush(); setContracts(undefined); setActiveContract(undefined);}}>Flush Cache</Button>
-            <hr />
-            <Input value={providerUrl} setValue={setProviderUrl} id="provider_url" label="Provider URL" />
-            <Button variant="light" onClick={updateProvider}>Set Provider</Button>
-        </Card.Body>
-    </Card>
-)};
+    const flushCache = () => {
+        flush(); 
+        setContracts(undefined); 
+        setActiveContract(undefined);
+    }
+
+    return (<>
+        <Button variant="danger" onClick={flushCache}>Flush Cache</Button>
+        <hr />
+        <Input value={providerUrl} setValue={setProviderUrl} id="provider_url" label="Provider URL" />
+        <Button variant="outline-primary" onClick={updateProvider}>Set Provider</Button>
+    </>)
+}
 
 export default AdminControls;

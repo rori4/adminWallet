@@ -2,6 +2,10 @@
   width: 1900px;
   background-color: #feeeea;
   padding: 16px;
+
+  /* dark mode */
+  /* background-color: #282c34;
+  color: whitesmoke; */
 }
 
 .App-logo {

@@ -1,4 +1,5 @@
 import React, {FunctionComponent} from 'react';
+import { InputGroup, FormControl } from "react-bootstrap";
 
 type InputProps = {
     id: string,
@@ -15,9 +16,9 @@ const Input: FunctionComponent<InputProps> = ({id, label, value, setValue, input
     };
     return (<>
         {label && <label htmlFor={id}>{label}</label>}
-        <div>
-            <input id={id} onChange={(e) => setValue(e.target.value)} value={value || ""} {...inputPropOverrides} />
-        </div>
+        <InputGroup className="mb-3">
+            <FormControl id={id} onChange={(e) => setValue(e.target.value)} value={value || ""} {...inputPropOverrides} />
+        </InputGroup>
     </>)
 }
 

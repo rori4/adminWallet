@@ -9,8 +9,8 @@ import {
 import { BigNumber, Contract } from 'ethers';
 
 // components
-import AdminControls from './components/AdminControls';
 import Contracts from './components/Contracts';
+import Navbar from './components/Navbar';
 import Wallets from './components/Wallets';
 import TxQueue, { QueuedTx } from './components/TxQueue';
 import { getContractName } from './components/helpers';
@@ -85,6 +85,10 @@ function App() {
       // const contract = await getContract("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2");
       // setActiveContract(contract);
       console.log("loading cached data");
+      const provider = getProvider();
+      provider._networkPromise.catch(e => {
+        alert("adminWallet failed to connect to the provider. Please double-check the Provider URL in the system settings.");
+      })
 
       // load contracts from cache
       const contracts = await getContracts();
@@ -99,9 +103,11 @@ function App() {
 
   return (
     <div className="App">
-      <Container>
+      <Navbar setActiveContract={setActiveContract} setContracts={setContracts} />
+      <Container style={{paddingTop: 16}}>
         <Row>
           <Col sm={7}>
+            <span><em>Add transactions to the queue.</em></span>
             <SendEth queueTx={queueSendEthTx} wallets={wallets} />
             <hr />
             <Contracts 
@@ -115,9 +121,8 @@ function App() {
             />
           </Col>
           <Col sm={5}>
+            <span><em>Sign and send queued transactions.</em></span>
             <Wallets wallets={wallets} setWallets={setWallets} />
-            <hr />
-            <AdminControls setContracts={setContracts} setActiveContract={setActiveContract} />
             <hr />
             <TxQueue transactions={txQueue} setTransactions={setTxQueue} />
           </Col>
