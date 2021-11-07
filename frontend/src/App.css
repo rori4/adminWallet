@@ -1,5 +1,7 @@
 .main-container {
   background-color: #feeeea;
+  border-radius: 4px;
+  padding-bottom: 16px;
 }
 
 .App-logo {
