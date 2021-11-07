@@ -40,17 +40,14 @@ const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, 
         <Input label="Add Contract" value={contractAddress} setValue={setContractAddress} id="contractAddress" inputProps={{placeholder: "Contract Address"}} />
         <Button disabled={!contractAddress} size="sm" onClick={() => {addContract(); setContractAddress(undefined);}}>Add Contract</Button>
         <hr />
-        {contracts && contracts.length > 0 && <>
-            <hr />
-            <Dropdown style={{marginBottom: 16}}>
-                <Dropdown.Toggle variant="link" id="contract-dropdown">{activeContract?.address || "Choose a contract"}</Dropdown.Toggle>
-                <Dropdown.Menu>
-                    {contracts.map((contract, idx) => <Dropdown.Item key={idx} onClick={() => setActiveContract(contract.contract)}>
-                        <code>{contract.contract.address}{contract.name && ` (${contract.name})`}</code>
-                    </Dropdown.Item>)}
-                </Dropdown.Menu>
-            </Dropdown>
-        </>}
+        {contracts && contracts.length > 0 && <Dropdown style={{marginBottom: 16}}>
+            <Dropdown.Toggle variant="link" id="contract-dropdown">{activeContract?.address || "Choose a contract"}</Dropdown.Toggle>
+            <Dropdown.Menu>
+                {contracts.map((contract, idx) => <Dropdown.Item key={idx} onClick={() => setActiveContract(contract.contract)}>
+                    <code>{contract.contract.address}{contract.name && ` (${contract.name})`}</code>
+                </Dropdown.Item>)}
+            </Dropdown.Menu>
+        </Dropdown>}
         {
             activeContract && <>
             <Card>

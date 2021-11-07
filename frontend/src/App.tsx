@@ -112,13 +112,13 @@ function App() {
 				<SendEth queueTx={queueSendEthTx} wallets={wallets} />
 				<hr />
 				<Contracts 
-				contracts={contracts} 
-				setContracts={setContracts} 
-				activeContract={activeContract} 
-				setActiveContract={setActiveContract} 
-				provider={provider} 
-				queueTx={queueContractTx} 
-				wallets={wallets}
+					contracts={contracts} 
+					setContracts={setContracts} 
+					activeContract={activeContract} 
+					setActiveContract={setActiveContract} 
+					provider={provider} 
+					queueTx={queueContractTx} 
+					wallets={wallets}
 				/>
 			</Col>
 			<Col sm={5}>
