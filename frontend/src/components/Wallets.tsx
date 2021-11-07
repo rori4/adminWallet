@@ -33,21 +33,18 @@ const Wallets: FunctionComponent<WalletsProps> = ({wallets, setWallets}) => {
         </>)
     }
 
-    return (<Card>
-        <Card.Body>
-            <h3>Wallets</h3>
-            <NewWallet />
-            <hr />
-            {wallets && wallets.map((wallet, idx) => (
-                <Card key={idx}>
-                    <Card.Body>
-                        {wallet.name && <Card.Title>{wallet.name}</Card.Title>}
-                        <p key={idx}>{wallet.wallet.address}</p>
-                    </Card.Body>
-                </Card>
-            ))}
-        </Card.Body>
-    </Card>)
+    return (<>
+        {wallets && wallets.map((wallet, idx) => (
+            <Card key={idx}>
+                <Card.Body>
+                    {wallet.name && <Card.Title>{wallet.name}</Card.Title>}
+                    <p key={idx}>{wallet.wallet.address}</p>
+                </Card.Body>
+            </Card>
+        ))}
+        <hr />
+        <NewWallet />
+    </>)
 };
 
 export default Wallets;

@@ -28,13 +28,13 @@ const FunctionDrawer: FunctionComponent<FunctionDrawerProps> = ({ contract, func
     const functionSpec = contract.interface.getFunction(functionName);
 
     const buttonAction = (isCall: boolean) => {
-      if (isCall) {
-        console.log("CALLING DIRECTLY");
-        triggerCall(contract, functionName, args, setResult, provider)
-      } else {
-        console.log("ADDING TX TO QUEUE");
-        queueTx(contract, functionName, args, provider, chosenWallet, ethValue);
-      }
+		if (isCall) {
+			console.log("CALLING DIRECTLY");
+			triggerCall(contract, functionName, args, setResult, provider)
+		} else {
+			console.log("ADDING TX TO QUEUE");
+			queueTx(contract, functionName, args, provider, chosenWallet, ethValue);
+		}
     }
 
     useEffect(() => {
@@ -47,24 +47,24 @@ const FunctionDrawer: FunctionComponent<FunctionDrawerProps> = ({ contract, func
     }, [rawArgs]);
 
     return (contract && rawArgs ? <Card border="light">
-      <Card.Body>
-        <Card.Title>{functionName}{functionSpec && functionSpec.payable && <em style={{ color: 'green', padding: 6 }}>Payable</em>}</Card.Title>
-        <Card.Subtitle>{functionSpec.constant ? "Call" : "Send"}</Card.Subtitle>
-        {functionSpec.payable && <Input id={`${functionName}_value`} value={ethValue} setValue={setEthValue} inputProps={{placeholder: "ETH amount (wei)"}} />}
-        {rawArgs.map((arg, idx) => {
-          let id = `${functionName}.${arg.name}`;
-          return (<div key={idx}>
-            <input id={id} type="text" placeholder={arg.name} onChange={(e) => {
-              let thisArgs = args;
-              thisArgs[idx] = e.target.value;
-              setArgs(thisArgs);
-            }} />
-          </div>)
-        })}
-        {result && <p><code>{result}</code></p>}
-        {!functionSpec.constant && <WalletDropdown wallets={wallets} setWallet={setChosenWallet} />}
-        <Button disabled={!functionSpec.constant && !chosenWallet} variant="link" onClick={() => buttonAction(functionSpec.constant)}>{functionName}</Button>
-      </Card.Body>
+		<Card.Body>
+			<Card.Title>{functionName}{functionSpec && functionSpec.payable && <em style={{ color: 'green', padding: 6 }}>Payable</em>}</Card.Title>
+			<Card.Subtitle>{functionSpec.constant ? "Call" : "Send"}</Card.Subtitle>
+			{functionSpec.payable && <Input id={`${functionName}_value`} value={ethValue} setValue={setEthValue} inputProps={{placeholder: "ETH amount (wei)"}} />}
+			{rawArgs.map((arg, idx) => {
+				let id = `${functionName}.${arg.name}`;
+				return (<div key={idx}>
+					<Input id={id} inputProps={{placeholder: arg.name}} value={args[idx]} setValue={(val: string) => {
+						let thisArgs = [...args];
+						thisArgs[idx] = val;
+						setArgs(thisArgs);
+					}} />
+				</div>)
+			})}
+			{result && <p><code>{result}</code></p>}
+			{!functionSpec.constant && <WalletDropdown wallets={wallets} setWallet={setChosenWallet} />}
+			<Button disabled={!functionSpec.constant && !chosenWallet} variant="link" onClick={() => buttonAction(functionSpec.constant)}>{functionName}</Button>
+		</Card.Body>
     </Card> : <></>
     )
 };

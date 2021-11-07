@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {
+  Accordion,
   Col,
   Container,
   Row,
@@ -88,7 +89,7 @@ function App() {
       const provider = getProvider();
       provider._networkPromise.catch(e => {
         alert("adminWallet failed to connect to the provider. Please double-check the Provider URL in the system settings.");
-      })
+      });
 
       // load contracts from cache
       const contracts = await getContracts();
@@ -106,26 +107,37 @@ function App() {
       <Navbar setActiveContract={setActiveContract} setContracts={setContracts} />
       <Container style={{paddingTop: 16}}>
         <Row>
-          <Col sm={7}>
-            <span><em>Add transactions to the queue.</em></span>
-            <SendEth queueTx={queueSendEthTx} wallets={wallets} />
-            <hr />
-            <Contracts 
-              contracts={contracts} 
-              setContracts={setContracts} 
-              activeContract={activeContract} 
-              setActiveContract={setActiveContract} 
-              provider={provider} 
-              queueTx={queueContractTx} 
-              wallets={wallets}
-            />
-          </Col>
-          <Col sm={5}>
-            <span><em>Sign and send queued transactions.</em></span>
-            <Wallets wallets={wallets} setWallets={setWallets} />
-            <hr />
-            <TxQueue transactions={txQueue} setTransactions={setTxQueue} />
-          </Col>
+			<Col sm={7}>
+				<span><em>Add transactions to the queue.</em></span>
+				<SendEth queueTx={queueSendEthTx} wallets={wallets} />
+				<hr />
+				<Contracts 
+				contracts={contracts} 
+				setContracts={setContracts} 
+				activeContract={activeContract} 
+				setActiveContract={setActiveContract} 
+				provider={provider} 
+				queueTx={queueContractTx} 
+				wallets={wallets}
+				/>
+			</Col>
+			<Col sm={5}>
+				<span><em>Sign and send queued transactions.</em></span>
+				<Accordion defaultActiveKey="1">
+					<Accordion.Item eventKey="0">
+						<Accordion.Header>Wallets</Accordion.Header>
+						<Accordion.Body>
+							<Wallets wallets={wallets} setWallets={setWallets} />
+						</Accordion.Body>
+					</Accordion.Item>
+					<Accordion.Item eventKey="1">
+						<Accordion.Header>Transaction Queue</Accordion.Header>
+						<Accordion.Body>
+							<TxQueue transactions={txQueue} setTransactions={setTxQueue} />
+						</Accordion.Body>
+					</Accordion.Item>
+				</Accordion>
+			</Col>
         </Row>
       </Container>
     </div>

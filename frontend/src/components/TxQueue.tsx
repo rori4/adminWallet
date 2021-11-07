@@ -38,11 +38,10 @@ const TxQueue: FunctionComponent<TxQueueProps> = ({setTransactions, transactions
     const deleteBundle = () => {
         setTransactions([]);
     }
-    return (<Card>
-        <Card.Body className={sendToFlashbots ? "flashbots-outline" : ""}>
-            <h3>Transactions</h3>
+    return (<>
+        <div>
             <Form.Check type="switch" id="flashbots-switch" label="Send to Flashbots" defaultChecked={sendToFlashbots} onChange={() => setSendToFlashbots(!sendToFlashbots)} />
-            {transactions.length > 0 && <Button variant="outline-danger" onClick={deleteBundle}>Empty Tx Queue</Button>}
+            {transactions.length > 0 ? <Button variant="outline-danger" onClick={deleteBundle}>Empty Tx Queue</Button> : <p><em>No transactions queued...</em></p>}
             {
                 transactions.map((tx, idx) => (
                     <Card key={idx}>
@@ -66,8 +65,8 @@ const TxQueue: FunctionComponent<TxQueueProps> = ({setTransactions, transactions
             }
             {sendToFlashbots && <WalletDropdown setWallet={setSponsorWallet} wallets={getWallets()} label="Choose FB Rep Wallet" />}
             <Button onClick={sendBundle} disabled={!transactions || transactions.length === 0 || (sendToFlashbots && !sponsorWallet)}>Send Bundle</Button>
-        </Card.Body>
-    </Card>);
+        </div>
+    </>);
 }
 
 export default TxQueue;
