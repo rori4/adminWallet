@@ -9,6 +9,7 @@ import Input from './Input';
 import { WalletResponse } from '../lib/cache/wallets';
 import { getProvider } from "../lib/provider";
 import WalletDropdown from './WalletDropdown';
+import Toast from './Toast';
 
 type SendEthProps = {
     queueTx: Function,
@@ -19,23 +20,26 @@ const SendEth: FunctionComponent<SendEthProps> = ({queueTx, wallets}) => {
     const [sendValue, setSendValue] = useState<string>();
     const [recipientAddress, setRecipientAddress] = useState<string>();
     const [chosenWallet, setChosenWallet] = useState<WalletResponse>();
+    const [showToast, setShowToast] = useState(false);
 
     const addTxToQueue = () => {
         if (recipientAddress && sendValue && utils.isAddress(recipientAddress) && chosenWallet) {
             console.log("adding \"send eth\" tx to queue");
             const provider = getProvider();
             queueTx(recipientAddress, sendValue, provider, chosenWallet);
+            setShowToast(true);
         } else {
             alert("Invalid \"Send Eth\" parameters.");
         }
     }
 
     return (<>
-            <h3>Send Eth</h3>
-            <Input id="send_value" value={sendValue} setValue={setSendValue} inputProps={{type: "number", placeholder: "ETH Amount (wei)"}} />
-            <Input id="recipient" value={recipientAddress} setValue={setRecipientAddress} inputProps={{placeholder: "Recipient Address"}} />
-            <WalletDropdown wallets={wallets} setWallet={setChosenWallet} />
-            <Button disabled={!sendValue || !recipientAddress || !chosenWallet} onClick={addTxToQueue} variant="link">Send Eth</Button>
+        <h3>Send Eth</h3>
+        <Input id="send_value" value={sendValue} setValue={setSendValue} inputProps={{type: "number", placeholder: "ETH Amount (wei)"}} />
+        <Input id="recipient" value={recipientAddress} setValue={setRecipientAddress} inputProps={{placeholder: "Recipient Address"}} />
+        <WalletDropdown wallets={wallets} setWallet={setChosenWallet} />
+        <Button disabled={!sendValue || !recipientAddress || !chosenWallet} onClick={addTxToQueue} variant="link">Send Eth</Button>
+        <Toast message="ETH transfer added to transaction queue." show={showToast} setShow={setShowToast} />
     </>)
 }
 
