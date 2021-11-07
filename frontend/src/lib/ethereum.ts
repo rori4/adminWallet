@@ -1,4 +1,4 @@
-import { BigNumber, Contract, Wallet, providers } from "ethers";
+import { BigNumber, Contract, Wallet, providers, utils } from "ethers";
 
 // lib
 import { getProvider } from "./provider";
@@ -6,21 +6,7 @@ import { QueuedTx } from "../components/TxQueue";
 
 export type EthProvider = providers.BaseProvider | providers.JsonRpcProvider;
 
-export const getTrueName = (contract: Contract, functionName: string) => (
-    contract.interface.getFunction(functionName).name
-);
-
-export const triggerCall = async (contract: Contract, functionName: string, args: any[], setResult: Function, provider: EthProvider) => {
-    const name = getTrueName(contract, functionName);
-    const tx = await contract.populateTransaction[name](...args);
-    const res = await provider.call(tx);
-    const frag = contract.interface.getFunction(functionName);
-    const decodedRes = contract.interface.decodeFunctionResult(frag, res)[0];
-
-    setResult(decodedRes.toString());
-};
-
-type AppTransactionRequest = {
+type ContractTransactionRequest = {
     args: string[], 
     contract: Contract, 
     functionName: string, 
@@ -31,9 +17,32 @@ type AppTransactionRequest = {
     wallet: Wallet, 
 }
 
-/// Builds a raw TransactionRequest.
-export const buildUnsignedTransaction = async (params: AppTransactionRequest): Promise<providers.TransactionRequest> => {
-    const {contract,
+type SendEthRequest = {
+    gasPriceOverride?: BigNumber,
+    nonceDelta: number,
+    recipient: string,
+    value: BigNumber,
+    wallet: Wallet,
+}
+
+export const getTrueFunctionName = (contract: Contract, functionName: string) => (
+    contract.interface.getFunction(functionName).name
+);
+
+export const triggerCall = async (contract: Contract, functionName: string, args: any[], setResult: Function, provider: EthProvider) => {
+    const name = getTrueFunctionName(contract, functionName);
+    const tx = await contract.populateTransaction[name](...args);
+    const res = await provider.call(tx);
+    const frag = contract.interface.getFunction(functionName);
+    const decodedRes = contract.interface.decodeFunctionResult(frag, res)[0];
+
+    setResult(decodedRes.toString());
+};
+
+/// Builds a raw TransactionRequest for a Contract method.
+export const buildUnsignedContractTransaction = async (params: ContractTransactionRequest): Promise<providers.TransactionRequest> => {
+    const {
+        contract,
         functionName,
         args,
         wallet,
@@ -41,7 +50,7 @@ export const buildUnsignedTransaction = async (params: AppTransactionRequest): P
         gasLimitOverride,
         value
     } = params;
-    const name = getTrueName(contract, functionName);
+    const name = getTrueFunctionName(contract, functionName);
     let tx = await contract.populateTransaction[name](...args);
     const provider = getProvider();
     const startNonce = await wallet.connect(provider).getTransactionCount();
@@ -56,6 +65,30 @@ export const buildUnsignedTransaction = async (params: AppTransactionRequest): P
     console.log("tx", tx);
     return tx;
 };
+
+/// Builds a raw TransactionRequest for a "send eth" tx.
+export const buildUnsignedSendEthTransaction = async (params: SendEthRequest): Promise<providers.TransactionRequest | undefined> => {
+    const {
+        nonceDelta,
+        recipient,
+        value,
+        wallet,
+    } = params;
+    const provider = getProvider();
+    const startNonce = await wallet.connect(provider).getTransactionCount();
+    if (utils.isAddress(recipient)) {
+        return {
+            from: wallet.address,
+            to: recipient,
+            value,
+            nonce: startNonce + nonceDelta,
+            gasLimit: 21000,
+        };
+    } else {
+        console.error("Invalid recipient. Cannot build transaction.");
+        return undefined;
+    }
+}
 
 /// Gets latest gas price from provider.
 const getLatestGasPrice = async () => {
@@ -86,15 +119,18 @@ export const sendMempoolBundle = async (queuedTxs: QueuedTx[], gasPriceOverride?
 
     // sign transactions
     const signedTransactionsPromises = updatedTransactions.map(tx => tx.wallet.wallet.signTransaction(tx.tx));
-    Promise.all(signedTransactionsPromises).then(signedTransactions => {
+    let res = undefined;
+    await Promise.all(signedTransactionsPromises).then(async signedTransactions => {
         const provider = getProvider();
         // send each transaction asynchronously
-        const txPromises = signedTransactions.map(tx => {
-            return provider.sendTransaction(tx);
-        });
+        const txPromises = signedTransactions.map(tx => (
+            provider.sendTransaction(tx)
+        ));
     
-        Promise.all(txPromises).then(txResults => {
+        await Promise.all(txPromises).then(txResults => {
             console.log(txResults);
+            res = txResults;
         });
     });
+    return res;
 };

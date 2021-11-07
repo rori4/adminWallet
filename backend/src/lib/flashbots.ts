@@ -67,6 +67,7 @@ export const signFlashbotsBundle = async (bundleTransactions: FlashbotsBundleTra
 }
 
 /// Sends bundle to flashbots in a block-monitoring loop
+/// TODO: maintain a list of active loops that the client can query
 export const sendFlashbotsBundle = async (queuedTxs: IQueuedTx[], sponsorWallet: Wallet) => {
     const provider = getProvider();
     const flashbotsProvider = await getFlashbotsProvider(sponsorWallet);
@@ -80,14 +81,13 @@ export const sendFlashbotsBundle = async (queuedTxs: IQueuedTx[], sponsorWallet:
             const simulationGasPrice = await checkSimulation(flashbotsProvider, signedBundle);
             console.log(`SIM PASSED. Gas price: ${simulationGasPrice.div(1e9)} gwei`);
 
-            // TODO: REMOVE ME
-            // test; probably need to remove this
-            // provider.removeAllListeners();
+            // TODO: figure out how to stay in listener while sim passes and return only when successfully mined or sim fails
+            // test; need to remove this eventually
+            provider.removeAllListeners();
             // return simulationGasPrice;
         } catch (e) {
             console.error("SIM FAILED", e);
-            // test; probably need to remove this
-            // provider.removeAllListeners();
+            provider.removeAllListeners();
             // return e;
         }
         
@@ -110,6 +110,6 @@ export const sendFlashbotsBundle = async (queuedTxs: IQueuedTx[], sponsorWallet:
         //     provider.removeAllListeners();
         // }
     });
-    return "OK";
+    return "received";
     // thanks Scott for inspiration from [searcher-sponsored-tx](https://github.com/flashbots/searcher-sponsored-tx/blob/main/src/index.ts)
 }

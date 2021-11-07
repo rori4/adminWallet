@@ -2,7 +2,7 @@ import React, { useState, FunctionComponent } from 'react';
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
-import { providers } from "ethers";
+import { providers, utils } from "ethers";
 
 // lib
 import { getWallets, WalletResponse } from "../lib/cache/wallets";
@@ -12,8 +12,8 @@ import WalletDropdown from './WalletDropdown';
 
 export type QueuedTx = {
     wallet: WalletResponse,
-    contractName: string,
-    functionName: string,
+    contractName?: string,
+    functionName?: string,
     args: string[],
     tx: providers.TransactionRequest,
 };
@@ -26,11 +26,13 @@ type TxQueueProps = {
 const TxQueue: FunctionComponent<TxQueueProps> = ({setTransactions, transactions}) => {
     const [sendToFlashbots, setSendToFlashbots] = useState(false);
     const [sponsorWallet, setSponsorWallet] = useState<WalletResponse>();
-    const sendBundle = () => {
+    const sendBundle = async () => {
         if (sendToFlashbots && sponsorWallet) {
-            sendFlashbotsBundle(transactions, sponsorWallet.wallet);
+            const res = await sendFlashbotsBundle(transactions, sponsorWallet.wallet);
+            console.log("flashbots bundle res", res);
         } else {
-            sendMempoolBundle(transactions);
+            const res = await sendMempoolBundle(transactions);
+            console.log("mempool bundle res", res);
         }
     }
     const deleteBundle = () => {
@@ -40,20 +42,24 @@ const TxQueue: FunctionComponent<TxQueueProps> = ({setTransactions, transactions
         <Card.Body className={sendToFlashbots ? "flashbots-outline" : ""}>
             <h3>Transactions</h3>
             <Form.Check type="switch" id="flashbots-switch" label="Send to Flashbots" defaultChecked={sendToFlashbots} onChange={() => setSendToFlashbots(!sendToFlashbots)} />
-            {transactions.length > 0 && <Button variant="outline-danger" onClick={deleteBundle}>Delete</Button>}
+            {transactions.length > 0 && <Button variant="outline-danger" onClick={deleteBundle}>Empty Tx Queue</Button>}
             {
                 transactions.map((tx, idx) => (
                     <Card key={idx}>
                         <Card.Body>
-                        <strong>
+                        {tx.contractName && <><strong>
                             {tx.contractName}
-                        </strong>
-                        <br />
-                        <em>
+                        </strong><br /></>}
+                        <strong><em>
                             {tx.functionName}({tx.args.reduce((a, b) => a === "" ? b : a + ", " + b, "")})
-                        </em>
+                        </em></strong>
+                        {(tx.tx.value && tx.tx.value > 0) && <><br /> <em>
+                            <strong>Value: </strong>{`${utils.formatEther(tx.tx.value)} ETH`}
+                        </em></>}
                         <br />
-                        Signer: {tx.wallet.name}
+                        <em><strong>To:</strong> {tx.tx.to}</em>
+                        <br />
+                        <em><strong>From:</strong> {tx.tx.from} ({tx.wallet.name})</em>
                         </Card.Body>
                     </Card>
                 ))

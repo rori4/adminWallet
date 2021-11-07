@@ -19,7 +19,8 @@ import { getContractName } from './components/helpers';
 import { ContractResponse, getContracts } from './lib/cache/contracts';
 import { getWallets, WalletResponse } from './lib/cache/wallets';
 import { getProvider } from './lib/provider';
-import { buildUnsignedTransaction, getTrueName, EthProvider } from "./lib/ethereum";
+import { buildUnsignedContractTransaction, getTrueFunctionName, EthProvider, buildUnsignedSendEthTransaction } from "./lib/ethereum";
+import SendEth from './components/SendEth';
 
 function App() {
   const [activeContract, setActiveContract] = useState<Contract>();
@@ -29,26 +30,53 @@ function App() {
   const [txQueue, setTxQueue] = useState<QueuedTx[]>([]);
   const provider = getProvider();
 
-  const queueTx = async (contract: Contract, functionName: string, args: string[], provider: EthProvider, wallet: WalletResponse, value?: string) => {
+  const getNonceDelta = (wallet: WalletResponse) => (
+    txQueue.filter(tx => tx.wallet === wallet).length
+  )
+
+  const queueContractTx = async (contract: Contract, functionName: string, args: string[], provider: EthProvider, wallet: WalletResponse, value?: string) => {
     // build raw transaction and add it to queue
-    const unsignedTx = await buildUnsignedTransaction({
+    const unsignedTx = await buildUnsignedContractTransaction({
       contract, 
       functionName, 
       args, 
       wallet: wallet.wallet.connect(provider), 
-      nonceDelta: txQueue.filter(tx => tx.wallet === wallet).length,
+      nonceDelta: getNonceDelta(wallet),
       value: value ? BigNumber.from(value) : BigNumber.from(0),
     });
     const newQueue = [...txQueue];
     newQueue.push({
       wallet,
-      functionName: getTrueName(contract, functionName),
+      functionName: getTrueFunctionName(contract, functionName),
       contractName: getContractName(contract.address, contracts || []),
       tx: unsignedTx,
       args,
     });
     setTxQueue(newQueue);
-    console.log(newQueue);
+    console.log("updated txQueue", newQueue);
+  }
+
+  const queueSendEthTx = async (recipient: string, value: string, provider: EthProvider, wallet: WalletResponse) => {
+    // build raw tx and add to queue
+    const unsignedTx = await buildUnsignedSendEthTransaction({
+      nonceDelta: getNonceDelta(wallet),
+      recipient,
+      value: value ? BigNumber.from(value) : BigNumber.from(0),
+      wallet: wallet.wallet.connect(provider),
+    });
+    const newQueue = [...txQueue];
+    if (unsignedTx) {
+      newQueue.push({
+        wallet,
+        tx: unsignedTx,
+        args: [],
+        functionName: "sendEth"
+      });
+      setTxQueue(newQueue);
+      console.log("updated txQueue", newQueue);
+    } else {
+      console.error("could not build unsigned tx for \"send eth\"");
+    }
   }
 
   useEffect(() => {
@@ -74,13 +102,15 @@ function App() {
       <Container>
         <Row>
           <Col sm={7}>
+            <SendEth queueTx={queueSendEthTx} wallets={wallets} />
+            <hr />
             <Contracts 
               contracts={contracts} 
               setContracts={setContracts} 
               activeContract={activeContract} 
               setActiveContract={setActiveContract} 
               provider={provider} 
-              queueTx={queueTx} 
+              queueTx={queueContractTx} 
               wallets={wallets}
             />
           </Col>

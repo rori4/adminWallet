@@ -6,7 +6,7 @@ import { QueuedTx } from "../components/TxQueue";
 
 /// Sends bundle to backend, which sends it to flashbots.
 export const sendFlashbotsBundle = async (queuedTxs: QueuedTx[], sponsorWallet: Wallet) => {
-    // map queuedTx to IQueuedTx (map wallet to wallet.privateKey)
+    // map queuedTx params (includes frontend display data) to raw tx params (tx data only)
     const transactions = queuedTxs.map(tx => (
       {
         tx: {
@@ -24,7 +24,18 @@ export const sendFlashbotsBundle = async (queuedTxs: QueuedTx[], sponsorWallet: 
     };
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
     if (backendUrl) {
-      const res = await axios.post(`${backendUrl}/flashbots`, reqData);
-      console.log("res", res);
+      try {
+        const res = await axios.post(`${backendUrl}/flashbots`, reqData);
+        if (res.status === 200) {
+          return res.data;
+        } else {
+          console.error("flashbots bundle was not accepted", res);
+          return undefined;
+        }        
+      } catch (e) {
+        console.error("failed to send flashbots bundle", e);
+      }
+    } else {
+      return undefined;
     }
 }

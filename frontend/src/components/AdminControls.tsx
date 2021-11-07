@@ -16,6 +16,12 @@ type AdminControlsProps = {
 
 const AdminControls: FunctionComponent<AdminControlsProps> = ({setContracts, setActiveContract}) => {
     const [providerUrl, setProviderUrl] = useState<string>(getProviderUrl());
+
+    const updateProvider = () => {
+        setProviderUrlInCache(providerUrl);
+        alert(`Provider set to ${providerUrl}`);
+    }
+
     return (
     <Card border="light" bg="secondary" text="light">
         <Card.Body>
@@ -23,7 +29,7 @@ const AdminControls: FunctionComponent<AdminControlsProps> = ({setContracts, set
             <Button variant="danger" onClick={() => {flush(); setContracts(undefined); setActiveContract(undefined);}}>Flush Cache</Button>
             <hr />
             <Input value={providerUrl} setValue={setProviderUrl} id="provider_url" label="Provider URL" />
-            <Button variant="light" onClick={() => setProviderUrlInCache(providerUrl)}>Set Provider</Button>
+            <Button variant="light" onClick={updateProvider}>Set Provider</Button>
         </Card.Body>
     </Card>
 )};

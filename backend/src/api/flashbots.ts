@@ -22,6 +22,5 @@ export const sendBundle = async (req: Request, res: Response, _next: NextFunctio
         },
     }));
     const flashbotsRes = await sendFlashbotsBundle(transactions, new Wallet(data.sponsorWalletKey));
-    console.log("flashbots res", flashbotsRes);
     res.status(200).send(flashbotsRes);
 }
