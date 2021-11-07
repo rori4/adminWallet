@@ -6,7 +6,8 @@
   "author": "@zeroXbrock",
   "license": "MIT",
   "scripts": {
-    "start": "npx ts-node src/app.ts"
+    "start": "npx ts-node src/app.ts",
+    "dev": "npx nodemon src/app.ts"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

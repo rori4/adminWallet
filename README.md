@@ -18,10 +18,13 @@
   * [x] set gas estimate and sign just before sending; store the unsigned tx instead of `signedTx`
 * [ ] make nonces dynamic
   * [ ] allow user to manually assign nonces in transaction queue (and/or a "refresh" button that auto-assigns all nonces based on tx count from provider)
-* [ ] allow user to send ETH
-* [ ] backend take PROVIDER_URL from frontend (except when sending to Flashbots)
+* [x] allow user to send ETH
+* [ ] backend take PROVIDER_URL from frontend (except when sending to Flashbots) (replace .env var)
 * [x] send transactions through Flashbots
   * [x] send bundles via flashbots relay.
   * [x] skirt CORS by using a locally-hosted backend
+
+## future features (hard mode)
+
 * [ ] deploy/use flash loans in bundle
 * [ ] run burner(s) in background, monitor statuses in frontend

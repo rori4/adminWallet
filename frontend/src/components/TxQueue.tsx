@@ -53,13 +53,13 @@ const TxQueue: FunctionComponent<TxQueueProps> = ({setTransactions, transactions
                         <strong><em>
                             {tx.functionName}({tx.args.reduce((a, b) => a === "" ? b : a + ", " + b, "")})
                         </em></strong>
+                        <br />
+                        <em><strong>From:</strong> {tx.tx.from} ({tx.wallet.name})</em>
+                        <br />
+                        <em><strong>To:</strong> {tx.tx.to}</em>
                         {(tx.tx.value && tx.tx.value > 0) && <><br /> <em>
                             <strong>Value: </strong>{`${utils.formatEther(tx.tx.value)} ETH`}
                         </em></>}
-                        <br />
-                        <em><strong>To:</strong> {tx.tx.to}</em>
-                        <br />
-                        <em><strong>From:</strong> {tx.tx.from} ({tx.wallet.name})</em>
                         </Card.Body>
                     </Card>
                 ))
