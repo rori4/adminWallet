@@ -23,7 +23,7 @@ export const getFlashbotsProvider = async (signer: Wallet) => {
 	return await FlashbotsBundleProvider.create(standardProvider, signer.connect(standardProvider));
 }
 
-/// Returns simulation gas price if simulation succeeds.
+/// Simulates bundle, returns gas price (miner_bribe / gas_used) if simulation succeeds.
 /// thanks to Scott Bigelow & Kendrick Tan for [this](https://github.com/flashbots/searcher-sponsored-tx/blob/main/src/utils.ts)
 export const checkSimulation = async (
 	flashbotsProvider: FlashbotsBundleProvider,
@@ -53,8 +53,7 @@ export const checkSimulation = async (
 			0
 		);
 
-		const gasPrice = simulationResponse.coinbaseDiff.div(gasUsed);
-		return gasPrice;
+		return simulationResponse.coinbaseDiff.div(gasUsed);
 	}
 
 	console.error(
