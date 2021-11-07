@@ -38,7 +38,7 @@ const Wallets: FunctionComponent<WalletsProps> = ({wallets, setWallets}) => {
             <Card key={idx}>
                 <Card.Body>
                     {wallet.name && <Card.Title>{wallet.name}</Card.Title>}
-                    <p key={idx}>{wallet.wallet.address}</p>
+                    <code key={idx}>{wallet.wallet.address}</code>
                 </Card.Body>
             </Card>
         ))}
