@@ -16,7 +16,7 @@ type NavProps = {
 
 const Navigation: FunctionComponent<NavProps> = ({setContracts, setActiveContract}) => {
     return (<Container>
-    <Navbar bg="light" variant="light" sticky="top" expand={false}>
+    <Navbar bg="none" variant="light" sticky="top" expand={false}>
         <Container fluid={true}>
             <Navbar.Brand>adminWallet</Navbar.Brand>
             <Navbar.Toggle aria-controls="offcanvasNavbar" />

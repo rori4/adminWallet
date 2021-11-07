@@ -105,7 +105,7 @@ function App() {
   return (
     <div className="App">
       <Navbar setActiveContract={setActiveContract} setContracts={setContracts} />
-      <Container style={{paddingTop: 16}}>
+      <Container className="main-container" style={{paddingTop: 16}}>
         <Row>
 			<Col sm={7}>
 				<span><em>Add transactions to the queue.</em></span>

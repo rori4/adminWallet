@@ -1,11 +1,5 @@
-.App-frame {
-  width: 1900px;
+.main-container {
   background-color: #feeeea;
-  padding: 16px;
-
-  /* dark mode */
-  /* background-color: #282c34;
-  color: whitesmoke; */
 }
 
 .App-logo {
