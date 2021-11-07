@@ -15,7 +15,8 @@ type NavProps = {
 }
 
 const Navigation: FunctionComponent<NavProps> = ({setContracts, setActiveContract}) => {
-    return (<Navbar bg="light" variant="light" sticky="top" expand={false}>
+    return (<Container>
+    <Navbar bg="light" variant="light" sticky="top" expand={false}>
         <Container fluid={true}>
             <Navbar.Brand>adminWallet</Navbar.Brand>
             <Navbar.Toggle aria-controls="offcanvasNavbar" />
@@ -34,7 +35,7 @@ const Navigation: FunctionComponent<NavProps> = ({setContracts, setActiveContrac
                 </Offcanvas.Body>
             </Navbar.Offcanvas>
         </Container>
-    </Navbar>);
+    </Navbar></Container>);
 }
 
 export default Navigation;
