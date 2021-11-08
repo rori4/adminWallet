@@ -1,7 +1,9 @@
 import React, { useState, FunctionComponent } from 'react';
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
+import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
 import { providers, utils } from "ethers";
 
 // lib
@@ -43,11 +45,20 @@ const TxQueue: FunctionComponent<TxQueueProps> = ({setTransactions, transactions
     }
 
     return (<>
-        <Form.Check type="switch" id="flashbots-switch" label="Send to Flashbots" defaultChecked={sendToFlashbots} onChange={() => setSendToFlashbots(!sendToFlashbots)} />
-        {sendToFlashbots &&
-            <Form.Check type="switch" id="flashbots-sim-switch" label="Simulation Only" defaultChecked={flashbotsSimulationOnly} onChange={() => setFlashbotsSimulationOnly(!flashbotsSimulationOnly)} />
-        }
-        {transactions.length > 0 ? <Button variant="outline-danger" onClick={deleteBundle}>Empty Tx Queue</Button> : <p><em>No transactions queued...</em></p>}
+        <Row>
+            <Col sm={6}>
+                <Form.Check type="switch" id="flashbots-switch" label="Send to Flashbots" defaultChecked={sendToFlashbots} onChange={() => setSendToFlashbots(!sendToFlashbots)} />
+                {sendToFlashbots &&
+                    <Form.Check type="switch" id="flashbots-sim-switch" label="Simulation Only" defaultChecked={flashbotsSimulationOnly} onChange={() => setFlashbotsSimulationOnly(!flashbotsSimulationOnly)} />
+                }
+            </Col>
+            <Col sm={6}>
+                <div style={{float: "right"}}>
+                    {transactions.length > 0 ? <Button variant="outline-danger" onClick={deleteBundle}>Empty Tx Queue</Button> : <p><em>No transactions queued...</em></p>}
+                </div>
+            </Col>
+        </Row>
+        
         {
             transactions.map((tx, idx) => (
                 <Card key={idx}>
@@ -73,7 +84,7 @@ const TxQueue: FunctionComponent<TxQueueProps> = ({setTransactions, transactions
             {!flashbotsSimulationOnly && <span style={{color: "orangered"}}><em>WARNING: Sending real transactions to mainnet.</em></span>}
             <WalletDropdown setWallet={setSponsorWallet} wallets={getWallets()} label="Choose FB Rep Wallet" />
         </>}
-            <Button onClick={sendBundle} disabled={!transactions || transactions.length === 0 || (sendToFlashbots && !sponsorWallet)}>Send Bundle</Button>
+            <Button onClick={sendBundle} disabled={!transactions || transactions.length === 0 || (sendToFlashbots && !sponsorWallet)} style={{marginTop: 13}}>Send Bundle</Button>
     </>);
 }
 
