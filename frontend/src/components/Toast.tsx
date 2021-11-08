@@ -8,7 +8,7 @@ type ToastProps = {
 }
 
 const CustomToast: FunctionComponent<ToastProps> = ({message, show, setShow}) => {
-    return (<Toast bg="info" show={show} autohide={true} delay={3000} onClose={() => setShow(false)} style={{position: "fixed", bottom: 24, right: 16}}>
+    return (<Toast show={show} autohide={true} delay={3000} onClose={() => setShow(false)} style={{position: "fixed", bottom: 24, right: 16, backgroundColor: "#44abdb"}}>
         <Toast.Body style={{color: "#efefef", textShadow: "1px 1px #13131342"}}>{message}</Toast.Body>
     </Toast>)
 }
