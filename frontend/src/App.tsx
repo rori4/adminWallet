@@ -38,20 +38,20 @@ function App() {
 	const queueContractTx = async (contract: Contract, functionName: string, args: string[], provider: EthProvider, wallet: WalletResponse, value?: string) => {
 		// build raw transaction and add it to queue
 		const unsignedTx = await buildUnsignedContractTransaction({
-		contract, 
-		functionName, 
-		args, 
-		wallet: wallet.wallet.connect(provider), 
-		nonceDelta: getNonceDelta(wallet),
-		value: value ? BigNumber.from(value) : BigNumber.from(0),
+			contract, 
+			functionName, 
+			args, 
+			wallet: wallet.wallet.connect(provider), 
+			nonceDelta: getNonceDelta(wallet),
+			value: value ? BigNumber.from(value) : BigNumber.from(0),
 		});
 		const newQueue = [...txQueue];
 		newQueue.push({
-		wallet,
-		functionName: getTrueFunctionName(contract, functionName),
-		contractName: getContractName(contract.address, contracts || []),
-		tx: unsignedTx,
-		args,
+			wallet,
+			functionName: getTrueFunctionName(contract, functionName),
+			contractName: getContractName(contract.address, contracts || []),
+			tx: unsignedTx,
+			args,
 		});
 		setTxQueue(newQueue);
 		console.log("updated txQueue", newQueue);
