@@ -71,7 +71,8 @@ npx hardhat node
 ## future features (hard mode)
 
 * [ ] deploy/use flash loans in bundle
-* [ ] run burner(s) in background, monitor statuses in frontend
+* [ ] run burner(s) in background, 
+* [ ] monitor bundle status in frontend
 
 ## neat
 
