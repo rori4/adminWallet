@@ -22,6 +22,10 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
+const FORK_BLOCK_NUMBER = process.env.FORK_BLOCK_NUMBER ? parseInt(process.env.FORK_BLOCK_NUMBER) : undefined;
+if (FORK_BLOCK_NUMBER)
+  console.log("Forking from block number", FORK_BLOCK_NUMBER);
+
 const config: HardhatUserConfig = {
   solidity: "0.8.4",
   networks: {
@@ -33,6 +37,7 @@ const config: HardhatUserConfig = {
     hardhat: {
       forking: {
         url: process.env.FORKING_PROVIDER_URL || "",
+        blockNumber: FORK_BLOCK_NUMBER,
       }
     }
   },
