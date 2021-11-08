@@ -10,6 +10,7 @@ import Toast from "./Toast";
 import { WalletResponse } from '../lib/cache/wallets';
 import WalletDropdown from './WalletDropdown';
 import { triggerCall, EthProvider } from "../lib/ethereum";
+import EthValueInput from './EthValueInput';
 
 type FunctionDrawerProps = {
   contract: Contract, 
@@ -58,7 +59,7 @@ const FunctionDrawer: FunctionComponent<FunctionDrawerProps> = ({ contract, func
 			<Card.Body>
 				<Card.Title>{functionName}{functionSpec && functionSpec.payable && <em style={{ color: 'green', padding: 6 }}>Payable</em>}</Card.Title>
 				<Card.Subtitle>{functionSpec.constant ? "Call" : "Send"}</Card.Subtitle>
-				{functionSpec.payable && <Input id={`${functionName}_value`} value={ethValue} setValue={setEthValue} inputProps={{placeholder: "ETH amount (wei)"}} />}
+				{functionSpec.payable && <EthValueInput value={ethValue} setValue={setEthValue} />}
 				{rawArgs.map((arg, idx) => {
 				let id = `${functionName}.${arg.name}`;
 				return (<div key={idx}>

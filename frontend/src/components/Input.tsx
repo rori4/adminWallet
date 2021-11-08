@@ -9,9 +9,10 @@ type InputProps = {
     inputProps?: any,
     prependText?: string,
     appendElement?: any,
+    appendText?: string,
 }
 
-const Input: FunctionComponent<InputProps> = ({id, label, value, setValue, inputProps, prependText, appendElement}) => {
+const Input: FunctionComponent<InputProps> = ({id, label, value, setValue, inputProps, prependText, appendElement, appendText}) => {
     const inputPropOverrides = {
         type: "text", // default value, can be overridden by inputProps
         ...inputProps,
@@ -22,6 +23,7 @@ const Input: FunctionComponent<InputProps> = ({id, label, value, setValue, input
             {prependText && <InputGroup.Text>{prependText}</InputGroup.Text>}
             <FormControl id={id} onChange={(e) => setValue(e.target.value)} value={value || ""} {...inputPropOverrides} />
             {appendElement}
+            {appendText && <InputGroup.Text>{appendText}</InputGroup.Text>}
         </InputGroup>
     </>)
 }

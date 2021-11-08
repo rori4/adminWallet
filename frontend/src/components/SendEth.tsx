@@ -10,6 +10,7 @@ import { WalletResponse } from '../lib/cache/wallets';
 import { getProvider } from "../lib/provider";
 import WalletDropdown from './WalletDropdown';
 import Toast from './Toast';
+import EthValueInput from './EthValueInput';
 
 type SendEthProps = {
     queueTx: Function,
@@ -35,9 +36,7 @@ const SendEth: FunctionComponent<SendEthProps> = ({queueTx, wallets}) => {
 
     return (<>
         <h3>Send Eth</h3>
-        <Input label="Amount" id="send_value" value={sendValue} setValue={setSendValue} 
-            prependText="wei" 
-            inputProps={{type: "number", placeholder: "ETH Amount (wei)"}} />
+        <EthValueInput value={sendValue} setValue={setSendValue} />
         <Input label="Recipient" id="recipient" value={recipientAddress} setValue={setRecipientAddress} 
             inputProps={{placeholder: "Recipient Address"}} 
         />
