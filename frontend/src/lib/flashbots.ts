@@ -5,7 +5,7 @@ import { Wallet } from "ethers";
 import { QueuedTx } from "../components/TxQueue";
 
 /// Sends bundle to backend, which sends it to flashbots.
-export const sendFlashbotsBundle = async (queuedTxs: QueuedTx[], sponsorWallet: Wallet) => {
+export const sendFlashbotsBundle = async (queuedTxs: QueuedTx[], sponsorWallet: Wallet, simulationOnly: boolean) => {
     // map queuedTx params (includes frontend display data) to raw tx params (tx data only)
     const transactions = queuedTxs.map(tx => (
       {
@@ -21,6 +21,7 @@ export const sendFlashbotsBundle = async (queuedTxs: QueuedTx[], sponsorWallet: 
     const reqData = {
       sponsorWalletKey,
       transactions,
+      simulationOnly,
     };
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
     if (backendUrl) {

@@ -77,7 +77,7 @@ const buildFlashbotsBundle = async (queuedTxs: IQueuedTx[], flashbotsProvider: F
 
 /// Sends bundle to flashbots in a block-monitoring loop
 /// TODO: maintain a list of active loops that the client can query
-export const sendFlashbotsBundle = async (queuedTxs: IQueuedTx[], sponsorWallet: Wallet) => {
+export const sendFlashbotsBundle = async (queuedTxs: IQueuedTx[], sponsorWallet: Wallet, simulationOnly: boolean) => {
 	const provider = getProvider();
 	const flashbotsProvider = await getFlashbotsProvider(sponsorWallet);
 	await provider.on('block', async (blockNumber) => {
@@ -92,32 +92,32 @@ export const sendFlashbotsBundle = async (queuedTxs: IQueuedTx[], sponsorWallet:
 
 			// TODO: figure out how to stay in listener while sim passes and return only when successfully mined or sim fails
 			// test; need to remove this eventually
-			provider.removeAllListeners();
+			// provider.removeAllListeners();
 			// return simulationGasPrice;
+
+			// send bundle to flashbots
+			if (!simulationOnly) {
+				const targetBlockNum = blockNumber + 1;
+				const bundleResponse = await flashbotsProvider.sendBundle(bundleTransactions, targetBlockNum);
+				if ('error' in bundleResponse) {
+					throw new Error(bundleResponse.error.message);
+				}
+				const bundleResolution = await bundleResponse.wait();
+				if (bundleResolution === FlashbotsBundleResolution.BundleIncluded) {
+					console.log(`Congrats, included in ${targetBlockNum}`)
+					provider.removeAllListeners();
+				} else if (bundleResolution === FlashbotsBundleResolution.BlockPassedWithoutInclusion) {
+					console.log(`Not included in ${targetBlockNum}`);
+				} else if (bundleResolution === FlashbotsBundleResolution.AccountNonceTooHigh) {
+					console.log("Nonce too high, bailing")
+					provider.removeAllListeners();
+				}
+			}
 		} catch (e) {
 			console.error("SIM FAILED", e);
 			provider.removeAllListeners();
-			// return e;
+			return e;
 		}
-
-
-		// DANGER! ONLY UNCOMMENT THIS WHEN EVERYTHING ELSE HAS BEEN TESTED.
-		// send bundle to flashbots
-		// const targetBlockNum = blockNumber + 1;
-		// const bundleResponse = await flashbotsProvider.sendBundle(bundleTransactions, targetBlockNum);
-		// if ('error' in bundleResponse) {
-		//     throw new Error(bundleResponse.error.message);
-		// }
-		// const bundleResolution = await bundleResponse.wait();
-		// if (bundleResolution === FlashbotsBundleResolution.BundleIncluded) {
-		//     console.log(`Congrats, included in ${targetBlockNum}`)
-		//     provider.removeAllListeners();
-		// } else if (bundleResolution === FlashbotsBundleResolution.BlockPassedWithoutInclusion) {
-		//     console.log(`Not included in ${targetBlockNum}`);
-		// } else if (bundleResolution === FlashbotsBundleResolution.AccountNonceTooHigh) {
-		//     console.log("Nonce too high, bailing")
-		//     provider.removeAllListeners();
-		// }
 	});
 	return "received";
 	// thanks Scott for inspiration from [searcher-sponsored-tx](https://github.com/flashbots/searcher-sponsored-tx/blob/main/src/index.ts)

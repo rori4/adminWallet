@@ -8,6 +8,7 @@ import { IQueuedTx } from '../lib/interfaces';
 type SendBundleRequest = {
     sponsorWalletKey: string,
     transactions: IQueuedTx[],
+    simulationOnly: boolean,
 }
 
 /// send bundle to flashbots
@@ -21,6 +22,6 @@ export const sendBundle = async (req: Request, res: Response, _next: NextFunctio
             value: txReq.tx.value ? BigNumber.from(txReq.tx.value) : undefined,
         },
     }));
-    const flashbotsRes = await sendFlashbotsBundle(transactions, new Wallet(data.sponsorWalletKey));
+    const flashbotsRes = await sendFlashbotsBundle(transactions, new Wallet(data.sponsorWalletKey), data.simulationOnly);
     res.status(200).send(flashbotsRes);
 }
