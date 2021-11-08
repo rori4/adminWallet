@@ -37,8 +37,10 @@ const Contracts: FunctionComponent<ContractsProps> = ({contracts, setContracts, 
       }
     return (<>
         <h3>Contracts</h3>
-        <Input label="Contract Address" value={contractAddress} setValue={setContractAddress} id="contractAddress" inputProps={{placeholder: "contract address"}} />
-        <Button disabled={!contractAddress} size="sm" onClick={() => {addContract(); setContractAddress(undefined);}}>Add Contract</Button>
+        <Input label="Contract Address" value={contractAddress} setValue={setContractAddress} id="contractAddress" 
+        inputProps={{placeholder: "contract address"}}
+        appendElement={<Button disabled={!contractAddress} size="sm" onClick={() => {addContract(); setContractAddress(undefined);}}>Add Contract</Button>} />
+        
         <hr />
         {contracts && contracts.length > 0 && <Dropdown style={{marginBottom: 16}}>
             <Dropdown.Toggle variant="link" id="contract-dropdown">{activeContract?.address || "Choose a contract"}</Dropdown.Toggle>
