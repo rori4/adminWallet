@@ -35,9 +35,15 @@ const SendEth: FunctionComponent<SendEthProps> = ({queueTx, wallets}) => {
 
     return (<>
         <h3>Send Eth</h3>
-        <Input id="send_value" value={sendValue} setValue={setSendValue} inputProps={{type: "number", placeholder: "ETH Amount (wei)"}} />
-        <Input id="recipient" value={recipientAddress} setValue={setRecipientAddress} inputProps={{placeholder: "Recipient Address"}} />
+        <Input label="Amount" id="send_value" value={sendValue} setValue={setSendValue} 
+            prependText="wei" 
+            inputProps={{type: "number", placeholder: "ETH Amount (wei)"}} />
+        <Input label="Recipient" id="recipient" value={recipientAddress} setValue={setRecipientAddress} 
+            inputProps={{placeholder: "Recipient Address"}} 
+        />
+        Sender
         <WalletDropdown wallets={wallets} setWallet={setChosenWallet} />
+
         <Button disabled={!sendValue || !recipientAddress || !chosenWallet} onClick={addTxToQueue} variant="link">Send Eth</Button>
         <Toast message="ETH transfer added to transaction queue." show={showToast} setShow={setShowToast} />
     </>)

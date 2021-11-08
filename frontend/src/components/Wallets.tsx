@@ -27,8 +27,8 @@ const Wallets: FunctionComponent<WalletsProps> = ({wallets, setWallets}) => {
         }
 
         return (<>
-            <Input value={walletName} setValue={setWalletName} id="wallet-name" inputProps={{placeholder: "nickname", autoComplete: "off"}} />
-            <Input value={privateKey} setValue={setPrivateKey} id="private-key" inputProps={{type: "password", placeholder: "private key", autoComplete: "off"}} />
+            <Input label="Nickname" value={walletName} setValue={setWalletName} id="wallet-name" inputProps={{placeholder: "nickname", autoComplete: "off"}} />
+            <Input label="Private Key" value={privateKey} setValue={setPrivateKey} id="private-key" inputProps={{type: "password", placeholder: "private key", autoComplete: "off"}} />
             <Button onClick={addWallet} disabled={!privateKey}>Add Wallet</Button>
         </>)
     }
