@@ -43,7 +43,6 @@ const SendEth: FunctionComponent<SendEthProps> = ({queueTx, wallets}) => {
         />
         Sender
         <WalletDropdown wallets={wallets} setWallet={setChosenWallet} />
-
         <Button disabled={!sendValue || !recipientAddress || !chosenWallet} onClick={addTxToQueue} variant="link">Send Eth</Button>
         <Toast message="ETH transfer added to transaction queue." show={showToast} setShow={setShowToast} />
     </>)
