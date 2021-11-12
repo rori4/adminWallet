@@ -35,7 +35,16 @@ function App() {
 		txQueue.filter(tx => tx.wallet === wallet).length
 	)
 
-	const queueContractTx = async (contract: Contract, functionName: string, args: string[], provider: EthProvider, wallet: WalletResponse, value?: string) => {
+	/**
+	 * Callback used by FunctionDrawer component to add a contract transaction to the queue.
+	 * @param contract 
+	 * @param functionName 
+	 * @param args 
+	 * @param provider 
+	 * @param wallet 
+	 * @param value 
+	 */
+	const queueContractTx = async (contract: Contract, functionName: string, args: string[], provider: EthProvider, wallet: WalletResponse, value?: string, gasLimit?: string) => {
 		// build raw transaction and add it to queue
 		const unsignedTx = await buildUnsignedContractTransaction({
 			contract, 
@@ -44,6 +53,7 @@ function App() {
 			wallet: wallet.wallet.connect(provider), 
 			nonceDelta: getNonceDelta(wallet),
 			value: value ? BigNumber.from(value) : BigNumber.from(0),
+			gasLimitOverride: gasLimit ? BigNumber.from(gasLimit) : undefined,
 		});
 		const newQueue = [...txQueue];
 		newQueue.push({
@@ -57,13 +67,20 @@ function App() {
 		console.log("updated txQueue", newQueue);
 	}
 
+	/**
+	 * Callback used by SendEth component to add a 'send ETH' transaction to the queue.
+	 * @param recipient 
+	 * @param value 
+	 * @param provider 
+	 * @param wallet 
+	 */
 	const queueSendEthTx = async (recipient: string, value: string, provider: EthProvider, wallet: WalletResponse) => {
 		// build raw tx and add to queue
 		const unsignedTx = await buildUnsignedSendEthTransaction({
-		nonceDelta: getNonceDelta(wallet),
-		recipient,
-		value: value ? BigNumber.from(value) : BigNumber.from(0),
-		wallet: wallet.wallet.connect(provider),
+			nonceDelta: getNonceDelta(wallet),
+			recipient,
+			value: value ? BigNumber.from(value) : BigNumber.from(0),
+			wallet: wallet.wallet.connect(provider),
 		});
 		const newQueue = [...txQueue];
 		if (unsignedTx) {
