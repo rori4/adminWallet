@@ -9,9 +9,9 @@
 First, create and fill in all your .env files.
 
 ```sh
-cp backend/.env.example .env
-cp frontend/.env.example .env
-cp hardhat/.env.example .env
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+cp hardhat/.env.example hardhat/.env
 
 # use vim because it's better
 ```
@@ -71,7 +71,8 @@ npx hardhat node
 ## future features (hard mode)
 
 * [ ] deploy/use flash loans in bundle
-* [ ] run burner(s) in background, monitor statuses in frontend
+* [ ] run burner(s) in background, 
+* [ ] monitor bundle status in frontend
 
 ## neat
 
