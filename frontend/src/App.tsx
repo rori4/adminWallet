@@ -87,9 +87,11 @@ function App() {
 			// setActiveContract(contract);
 			console.log("loading cached data");
 			const provider = getProvider();
-			provider._networkPromise.catch(e => {
-				alert("adminWallet failed to connect to the provider. Please double-check the Provider URL in the system settings.");
-			});
+			if (provider && !!provider._networkPromise) {
+				provider._networkPromise.catch(e => {
+					alert("adminWallet failed to connect to the provider. Please double-check the Provider URL in the system settings.");
+				});
+			}
 
 			// load contracts from cache
 			const contracts = await getContracts();
