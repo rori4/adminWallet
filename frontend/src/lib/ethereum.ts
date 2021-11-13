@@ -115,7 +115,6 @@ export const updateGasPrices = async (queuedTxs: QueuedTx[], gasPriceOverride?: 
 export const sendMempoolBundle = async (queuedTxs: QueuedTx[], gasPriceOverride?: BigNumber) => {
     // assign fresh gas prices
     const updatedTransactions = await updateGasPrices(queuedTxs, gasPriceOverride);
-    // TODO: update nonces to all transactions here as well
 
     // sign transactions
     const signedTransactionsPromises = updatedTransactions.map(tx => tx.wallet.wallet.signTransaction(tx.tx));
